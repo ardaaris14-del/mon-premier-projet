@@ -1,0 +1,32 @@
+{
+  "nom": "facture",
+  "description": "Facture fournisseur ou client",
+  "instructions": "Le total TTC est le montant final à payer. Si plusieurs taux de TVA apparaissent, additionne-les dans montant_tva.",
+  "champs": [
+    {"nom": "numero_facture", "libelle": "Numéro de facture", "type": "texte", "obligatoire": true},
+    {"nom": "date_facture", "libelle": "Date d'émission", "type": "date", "obligatoire": true},
+    {"nom": "date_echeance", "libelle": "Date d'échéance", "type": "date"},
+    {"nom": "emetteur_nom", "libelle": "Nom de l'émetteur", "type": "texte", "obligatoire": true},
+    {"nom": "emetteur_adresse", "libelle": "Adresse de l'émetteur", "type": "texte"},
+    {"nom": "emetteur_siret", "libelle": "SIRET de l'émetteur", "type": "texte", "description": "14 chiffres, recopiés tels quels"},
+    {"nom": "emetteur_tva", "libelle": "Numéro de TVA intracommunautaire", "type": "texte"},
+    {"nom": "client_nom", "libelle": "Nom du client", "type": "texte"},
+    {"nom": "client_adresse", "libelle": "Adresse de facturation", "type": "texte"},
+    {"nom": "montant_ht", "libelle": "Total hors taxes", "type": "nombre"},
+    {"nom": "montant_tva", "libelle": "Montant de TVA", "type": "nombre"},
+    {"nom": "montant_ttc", "libelle": "Total toutes taxes comprises", "type": "nombre", "obligatoire": true},
+    {"nom": "devise", "libelle": "Devise", "type": "choix", "choix": ["EUR", "USD", "GBP", "CHF", "CAD"]},
+    {"nom": "mode_paiement", "libelle": "Mode de paiement", "type": "texte"},
+    {
+      "nom": "lignes",
+      "libelle": "Lignes de la facture",
+      "type": "tableau",
+      "colonnes": [
+        {"nom": "designation", "libelle": "Désignation", "type": "texte"},
+        {"nom": "quantite", "libelle": "Quantité", "type": "nombre"},
+        {"nom": "prix_unitaire_ht", "libelle": "Prix unitaire HT", "type": "nombre"},
+        {"nom": "total_ht", "libelle": "Total HT de la ligne", "type": "nombre"}
+      ]
+    }
+  ]
+}

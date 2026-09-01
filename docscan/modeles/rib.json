@@ -1,0 +1,16 @@
+{
+  "nom": "rib",
+  "description": "Relevé d'identité bancaire",
+  "instructions": "L'IBAN doit être recopié sans espaces. Vérifie qu'il commence par deux lettres de code pays.",
+  "champs": [
+    {"nom": "titulaire", "libelle": "Titulaire du compte", "type": "texte", "obligatoire": true},
+    {"nom": "iban", "libelle": "IBAN", "type": "texte", "obligatoire": true, "description": "Sans espaces"},
+    {"nom": "bic", "libelle": "BIC / SWIFT", "type": "texte"},
+    {"nom": "banque", "libelle": "Nom de la banque", "type": "texte"},
+    {"nom": "domiciliation", "libelle": "Domiciliation de l'agence", "type": "texte"},
+    {"nom": "code_banque", "libelle": "Code banque", "type": "texte"},
+    {"nom": "code_guichet", "libelle": "Code guichet", "type": "texte"},
+    {"nom": "numero_compte", "libelle": "Numéro de compte", "type": "texte"},
+    {"nom": "cle_rib", "libelle": "Clé RIB", "type": "texte"}
+  ]
+}
