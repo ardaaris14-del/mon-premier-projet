@@ -1,0 +1,23 @@
+{
+  "nom": "exemple_personnalise",
+  "description": "Gabarit de départ : copiez ce fichier et remplacez les champs par les vôtres",
+  "instructions": "Consignes libres transmises au modèle en plus des champs. Facultatif.",
+  "champs": [
+    {"nom": "un_texte", "libelle": "Champ texte", "type": "texte", "description": "Précisez ici où trouver l'information dans le document", "obligatoire": true},
+    {"nom": "une_date", "libelle": "Champ date", "type": "date"},
+    {"nom": "un_montant", "libelle": "Champ décimal", "type": "nombre"},
+    {"nom": "un_entier", "libelle": "Champ entier", "type": "entier"},
+    {"nom": "une_case_a_cocher", "libelle": "Champ oui/non", "type": "booleen"},
+    {"nom": "une_liste", "libelle": "Plusieurs valeurs textuelles", "type": "liste"},
+    {"nom": "un_choix", "libelle": "Valeur imposée parmi une liste", "type": "choix", "choix": ["option_a", "option_b", "option_c"]},
+    {
+      "nom": "un_tableau",
+      "libelle": "Tableau à colonnes (lignes d'une facture, écritures d'un relevé…)",
+      "type": "tableau",
+      "colonnes": [
+        {"nom": "libelle_ligne", "type": "texte"},
+        {"nom": "montant_ligne", "type": "nombre"}
+      ]
+    }
+  ]
+}

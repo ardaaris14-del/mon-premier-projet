@@ -1,0 +1,19 @@
+{
+  "nom": "carte_identite",
+  "description": "Pièce d'identité (CNI, passeport, titre de séjour)",
+  "instructions": "Si la bande MRZ (lignes de caractères en bas du document) est lisible, utilise-la pour vérifier les noms et le numéro. Les noms de famille sont en majuscules sur le document : recopie-les tels quels.",
+  "champs": [
+    {"nom": "type_piece", "libelle": "Type de pièce", "type": "choix", "choix": ["carte_identite", "passeport", "titre_sejour", "permis_conduire"]},
+    {"nom": "nom", "libelle": "Nom de famille", "type": "texte", "obligatoire": true},
+    {"nom": "prenoms", "libelle": "Prénoms", "type": "liste"},
+    {"nom": "date_naissance", "libelle": "Date de naissance", "type": "date", "obligatoire": true},
+    {"nom": "lieu_naissance", "libelle": "Lieu de naissance", "type": "texte"},
+    {"nom": "sexe", "libelle": "Sexe", "type": "choix", "choix": ["F", "M", "X"]},
+    {"nom": "nationalite", "libelle": "Nationalité", "type": "texte"},
+    {"nom": "numero_document", "libelle": "Numéro du document", "type": "texte", "obligatoire": true},
+    {"nom": "date_delivrance", "libelle": "Date de délivrance", "type": "date"},
+    {"nom": "date_expiration", "libelle": "Date d'expiration", "type": "date"},
+    {"nom": "autorite_delivrance", "libelle": "Autorité de délivrance", "type": "texte"},
+    {"nom": "mrz", "libelle": "Bande MRZ", "type": "texte", "description": "Les lignes de la zone de lecture automatique, recopiées caractère par caractère"}
+  ]
+}
