@@ -1,0 +1,57 @@
+name: Machine Jour Un
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["jour-un/**"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: machine-jour-un
+  cancel-in-progress: false
+
+jobs:
+  machine:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r jour-un/requirements.txt
+
+      - name: Récupérer la mémoire de la machine
+        uses: actions/cache/restore@v4
+        with:
+          path: jour-un/automatisation/donnees
+          key: donnees-${{ github.run_id }}
+          restore-keys: donnees-
+
+      - name: Trouver les nouvelles entreprises et préparer leurs kits
+        env:
+          INSEE_API_KEY: ${{ secrets.INSEE_API_KEY }}
+          COCKPIT_MOT_DE_PASSE: ${{ secrets.COCKPIT_MOT_DE_PASSE }}
+        run: python jour-un/automatisation/machine.py --exiger-chiffrement --sortie _site
+
+      - name: Sauvegarder la mémoire de la machine
+        uses: actions/cache/save@v4
+        with:
+          path: jour-un/automatisation/donnees
+          key: donnees-${{ github.run_id }}
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploiement
+        uses: actions/deploy-pages@v4

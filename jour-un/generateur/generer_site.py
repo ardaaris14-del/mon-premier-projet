@@ -27,14 +27,20 @@ def carte(titre, texte):
     return f'<div class="card"><h3>{e(titre)}</h3><p>{e(texte)}</p></div>'
 
 
-def generer(chemin_json):
-    data = json.loads(Path(chemin_json).read_text(encoding="utf-8"))
+def lien_tel(tel):
+    chiffres = "".join(c for c in tel if c.isdigit() or c == "+")
+    if chiffres.startswith("0") and len(chiffres) == 10:
+        return "+33" + chiffres[1:]
+    return chiffres
+
+
+def rendre(data, origine="config"):
     manquants = [c for c in OBLIGATOIRES if not data.get(c)]
     if manquants:
-        raise SystemExit(f"{chemin_json} : champs manquants -> {', '.join(manquants)}")
+        raise ValueError(f"{origine} : champs manquants -> {', '.join(manquants)}")
 
     tel = data["telephone"]
-    tel_lien = "+33" + tel.replace(" ", "").lstrip("0") if tel.startswith("0") else tel.replace(" ", "")
+    tel_lien = lien_tel(tel)
 
     services = "".join(carte(s["titre"], s["texte"]) for s in data["services"])
 
@@ -62,8 +68,8 @@ def generer(chemin_json):
     bandeau = ""
     if data.get("maquette"):
         bandeau = (
-            f'<div class="maquette">Maquette gratuite préparée pour {e(data["nom"])} '
-            f'par {e(data.get("realise_par", "votre prestataire"))} — site non publié</div>'
+            f'<div class="maquette">Maquette de démonstration préparée pour {e(data["nom"])} '
+            f'par {e(data.get("realise_par", "votre prestataire"))} — ce n\'est pas le site officiel de l\'entreprise</div>'
         )
 
     nom = data["nom"]
@@ -108,10 +114,19 @@ def generer(chemin_json):
         "responsable": e(data.get("responsable", "à compléter")),
         "hebergeur": e(data.get("hebergeur", "Netlify, Inc. — 512 2nd Street, San Francisco, CA 94107, USA")),
         "realise_par": e(data.get("realise_par", "")),
+        "meta_robots": '<meta name="robots" content="noindex, nofollow">' if data.get("maquette") else "",
     }
 
-    html = Template((ICI / "template.html").read_text(encoding="utf-8")).substitute(valeurs)
-    dossier = SORTIE / data["slug"]
+    return Template((ICI / "template.html").read_text(encoding="utf-8")).substitute(valeurs)
+
+
+def generer(chemin_json, sortie=SORTIE):
+    data = json.loads(Path(chemin_json).read_text(encoding="utf-8"))
+    try:
+        html = rendre(data, chemin_json)
+    except ValueError as err:
+        raise SystemExit(str(err))
+    dossier = Path(sortie) / data["slug"]
     dossier.mkdir(parents=True, exist_ok=True)
     (dossier / "index.html").write_text(html, encoding="utf-8")
     print(f"OK -> {dossier / 'index.html'}")

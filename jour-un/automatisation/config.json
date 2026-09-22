@@ -1,0 +1,45 @@
+{
+ "moi": {
+  "agence": "Jour Un",
+  "nom": "Prénom Nom",
+  "telephone": "06 00 00 00 00",
+  "email": "contact@exemple.fr",
+  "ville": "Lyon",
+  "siret": "000 000 000 00000"
+ },
+ "offre": {
+  "prix_kit": 149,
+  "prix_mois": 29,
+  "lien_paiement": ""
+ },
+ "zone": {
+  "departements": [
+   "69"
+  ],
+  "codes_postaux": [
+   "69001",
+   "69003",
+   "69007",
+   "69100"
+  ],
+  "metiers": [
+   "plombier",
+   "electricien",
+   "peintre",
+   "menuisier",
+   "couvreur",
+   "coiffeur",
+   "estheticienne",
+   "garage"
+  ]
+ },
+ "age_max_jours": 90,
+ "pages_sirene": 4,
+ "kits_max": 300,
+ "messages": {
+  "sms": "Bonjour et félicitations pour la création de {nom} ! Je suis {moi}. Pour vous aider à démarrer, j'ai préparé votre kit de lancement : site internet, logo, carte de visite et fiche Google, déjà à votre nom. Jetez un œil : {lien} — Bonne journée ! {tel}",
+  "email_objet": "{nom} : votre kit de lancement est prêt",
+  "email": "Bonjour,\n\nFélicitations pour la création de {nom} !\n\nJe m'appelle {moi} et j'aide les nouvelles entreprises à trouver leurs premiers clients. J'ai pris l'initiative de préparer votre kit de lancement, déjà à votre nom : un site internet, trois propositions de logo, une carte de visite et le texte de votre fiche Google.\n\nTout est ici : {lien}\n\nS'il vous plaît, il est à vous. Sinon, aucun souci.\n\nBonne continuation,\n{moi}\n{tel}\n\nPour ne plus recevoir de message de ma part, répondez simplement « stop »."
+ },
+ "exclus": []
+}

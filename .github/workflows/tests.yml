@@ -1,0 +1,25 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r jour-un/requirements.txt
+      - name: Tests de la machine
+        run: python -m unittest discover -s jour-un/automatisation/tests -v
+      - name: Générateur de site
+        run: python jour-un/generateur/generer_site.py jour-un/generateur/clients/exemple-plomberie-martin.json
+      - name: Construction complète sans réseau
+        run: python jour-un/automatisation/machine.py --hors-ligne --exiger-chiffrement --sortie /tmp/_site

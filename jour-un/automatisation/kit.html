@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kit de lancement — $nom</title>
+<style>
+:root{--c:$couleur;--ink:#14161a;--muted:#5b616e;--line:#e3e6eb;--soft:#f5f6f8}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--soft);line-height:1.55}
+.bandeau{background:#111;color:#fff;text-align:center;font-size:13px;padding:8px 16px}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+.hero{padding:48px 0 28px}
+.hero .sur{color:var(--c);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:13px}
+.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.12;margin:8px 0 12px}
+.hero p{color:var(--muted);font-size:18px;margin:0;max-width:640px}
+section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0}
+h2{font-size:21px;margin:0 0 4px;display:flex;gap:10px;align-items:center}
+h2 .n{background:var(--c);color:#fff;border-radius:50%;width:30px;height:30px;display:inline-grid;place-items:center;font-size:15px;flex:none}
+.sous{color:var(--muted);margin:0 0 16px}
+.ecran{border:10px solid #14161a;border-radius:26px;overflow:hidden;width:100%;max-width:360px;height:560px;margin:0 auto;display:block;background:#fff}
+.ecran iframe{width:100%;height:100%;border:0}
+.btn{display:inline-block;background:var(--c);color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:12px;border:0;font:inherit;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);font-weight:600}
+.centre{text-align:center;margin-top:14px}
+.logos{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.logo{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;place-items:center;background:#fff}
+.logo svg{width:100%;height:auto}
+.carte{width:340px;max-width:100%;aspect-ratio:85/55;margin:0 auto;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.12);background:#fff;padding:18px;display:flex;flex-direction:column;justify-content:space-between;border-top:6px solid var(--c)}
+.carte svg{width:80%;height:auto}
+.carte .coord{font-size:12px;color:var(--muted);line-height:1.5}
+.carte .coord b{color:var(--ink);font-size:13px}
+.desc{background:var(--soft);border-radius:12px;padding:14px;white-space:pre-wrap}
+.posts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.post{border:1px solid var(--line);border-radius:12px;padding:14px}
+.post p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.offre{background:var(--ink);color:#fff;border:0}
+.offre .prix{font-size:44px;font-weight:800;margin:6px 0}
+.offre ul{padding-left:20px;margin:12px 0 20px}
+.offre li{margin:4px 0}
+.offre .sous{color:#b9bec8}
+.offre .btn.ghost{background:transparent;color:#fff;border-color:#3a3f4a}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 0 40px}
+@media print{body *{visibility:hidden}.carte,.carte *{visibility:visible}.carte{position:absolute;top:0;left:0;box-shadow:none;border:1px solid #ccc}}
+</style>
+</head>
+<body>
+<div class="bandeau">Aperçu privé préparé pour $nom par $agence — ce n'est pas un site officiel de l'entreprise</div>
+<div class="wrap">
+  <div class="hero">
+    <div class="sur">Kit de lancement · $metier · $ville</div>
+    <h1>Félicitations pour la création de $nom !<br>Votre kit de lancement est prêt.</h1>
+    <p>Site internet, logo, carte de visite, fiche Google : tout ce qu'il faut pour que vos premiers clients vous trouvent. Déjà fait, à votre nom. Regardez.</p>
+  </div>
+
+  <section>
+    <h2><span class="n">1</span> Votre site internet</h2>
+    <p class="sous">Adapté aux téléphones, avec bouton d'appel, services, horaires et carte.</p>
+    <div class="ecran"><iframe src="$lien_site" title="Aperçu du site" loading="lazy"></iframe></div>
+    <div class="centre"><a class="btn ghost" href="$lien_site" target="_blank">Ouvrir le site en grand</a></div>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span> Votre logo</h2>
+    <p class="sous">Trois propositions. On ajuste couleurs et typographie avec vous.</p>
+    <div class="logos">$logos</div>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span> Votre carte de visite</h2>
+    <p class="sous">Prête à imprimer (format standard 85 × 55 mm).</p>
+    <div class="carte">
+      $logo_carte
+      <div class="coord"><b>$metier</b><br>$tel · $email<br>$adresse</div>
+    </div>
+    <div class="centre"><button class="btn ghost" onclick="window.print()">Imprimer la carte</button></div>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> Votre fiche Google</h2>
+    <p class="sous">La fiche Google, c'est ce qui vous fait apparaître sur Google Maps. Voici sa description, déjà rédigée :</p>
+    <div class="desc" id="desc">$description</div>
+    <p style="margin:14px 0 4px"><b>Catégorie principale, puis services à renseigner :</b></p>
+    <ul style="margin:0">$categories</ul>
+    <div class="centre"><button class="btn ghost" id="copier">Copier la description</button></div>
+  </section>
+
+  <section>
+    <h2><span class="n">5</span> Vos 4 premières publications</h2>
+    <p class="sous">Pour montrer à Google et à vos clients que votre entreprise est active dès le premier mois.</p>
+    <div class="posts">$posts</div>
+  </section>
+
+  <section class="offre">
+    <h2>Tout est à vous pour $prix_kit €</h2>
+    <p class="sous">Paiement unique. Aucun abonnement obligatoire.</p>
+    <ul>
+      <li>Mise en ligne du site sur votre nom de domaine (1 an inclus)</li>
+      <li>Logo final en fichiers haute définition</li>
+      <li>Carte de visite prête pour l'imprimeur</li>
+      <li>Création de votre fiche Google avec vous, et 4 premières publications</li>
+    </ul>
+    <p class="sous">En option, pour ne plus vous en occuper : <b style="color:#fff">$prix_mois € / mois</b> (hébergement, modifications, publications mensuelles, réponse à vos avis). Sans engagement.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+      <a class="btn" href="$lien_paiement">Je prends mon kit</a>
+      <a class="btn ghost" href="tel:$moi_tel">Une question ? $moi_tel</a>
+    </div>
+  </section>
+
+  <footer>$agence · $moi · $moi_tel · $moi_email<br>Pas intéressé ? Aucun problème : répondez « stop » et ce kit sera supprimé.</footer>
+</div>
+<script>
+document.getElementById("copier").addEventListener("click", async e => {
+  try { await navigator.clipboard.writeText(document.getElementById("desc").textContent); e.target.textContent = "Copié !"; }
+  catch (err) { e.target.textContent = "Sélectionnez le texte pour le copier"; }
+});
+</script>
+</body>
+</html>
