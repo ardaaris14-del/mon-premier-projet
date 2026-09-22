@@ -1,0 +1,36 @@
+{
+  "slug": "exemple-plomberie-martin",
+  "maquette": true,
+  "realise_par": "Visibilité Locale",
+  "nom": "Plomberie Martin",
+  "metier": "Plombier chauffagiste",
+  "type_schema": "Plumber",
+  "ville": "Villeurbanne",
+  "rayon": "15 km autour de Lyon",
+  "titre": "Votre plombier à Villeurbanne, intervention rapide 7j/7",
+  "accroche": "Fuite, chauffe-eau, débouchage : un artisan local qui décroche le téléphone et annonce le prix avant d'intervenir.",
+  "apropos": "Exemple fictif : remplace ce texte par l'histoire réelle du client (années d'expérience, certifications, zone d'intervention). Les vrais clients font confiance à un visage et une histoire, pas à un slogan.",
+  "telephone": "06 00 00 00 00",
+  "whatsapp": "33600000000",
+  "email": "contact@exemple.fr",
+  "adresse": "1 rue de l'Exemple, 69100 Villeurbanne",
+  "couleur": "#0b63ce",
+  "badges": ["Devis gratuit", "Intervention sous 2h", "Artisan local"],
+  "services": [
+    {"titre": "Dépannage urgent", "texte": "Fuite d'eau, canalisation bouchée, WC qui déborde : on intervient vite."},
+    {"titre": "Chauffe-eau", "texte": "Remplacement et entretien de ballons électriques et thermodynamiques."},
+    {"titre": "Salle de bain", "texte": "Rénovation complète, douche à l'italienne, remplacement de robinetterie."},
+    {"titre": "Chauffage", "texte": "Entretien de chaudière, radiateurs, purge et désembouage."}
+  ],
+  "avis": [
+    {"auteur": "Exemple — à remplacer", "note": 5, "texte": "Copie ici un vrai avis Google du client (texte exact + prénom). N'invente jamais d'avis."}
+  ],
+  "horaires": {
+    "Lundi – Vendredi": "8h – 19h",
+    "Samedi": "9h – 17h",
+    "Dimanche": "Urgences uniquement"
+  },
+  "raison_sociale": "Plomberie Martin (exemple)",
+  "siret": "à compléter",
+  "responsable": "à compléter"
+}

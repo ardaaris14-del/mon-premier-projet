@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visibilité Locale — plus de clients depuis Google Maps</title>
+<meta name="description" content="Plus d'avis, une meilleure note et plus d'appels depuis Google Maps pour les artisans et commerces. Sans engagement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--c:#0b63ce;--ink:#14161a;--muted:#5b616e;--soft:#f4f6f9;--line:#e3e6eb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:68px}
+.logo{font-weight:800;font-size:19px}.logo span{color:var(--c)}
+.btn{display:inline-block;background:var(--c);color:#fff;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:10px}
+header .btn{padding:10px 16px;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.hero{padding:72px 0 64px;background:linear-gradient(180deg,var(--soft),#fff)}
+.hero h1{font-size:clamp(32px,5vw,54px);line-height:1.08;font-weight:800;max-width:780px}
+.hero h1 em{font-style:normal;color:var(--c)}
+.hero p{font-size:19px;color:var(--muted);max-width:620px;margin:18px 0 28px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+section{padding:64px 0}
+h2{font-size:32px;font-weight:800;margin-bottom:10px}
+.lead{color:var(--muted);margin-bottom:32px;max-width:680px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:22px;background:#fff}
+.card b{display:block;margin-bottom:6px;font-size:17px}
+.card p{color:var(--muted);font-size:15px}
+.num{width:36px;height:36px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:800;margin-bottom:12px}
+.alt{background:var(--soft)}
+.prix{max-width:520px;margin:0 auto;text-align:center;border:2px solid var(--c);border-radius:18px;padding:32px;background:#fff}
+.prix .montant{font-size:52px;font-weight:800}.prix .montant small{font-size:18px;color:var(--muted);font-weight:600}
+.prix ul{list-style:none;text-align:left;margin:22px 0}
+.prix li{padding:7px 0;border-bottom:1px solid var(--line)}
+.prix li::before{content:"✔ ";color:var(--c);font-weight:800}
+details{border-bottom:1px solid var(--line);padding:16px 0}
+summary{font-weight:600;cursor:pointer}
+details p{color:var(--muted);margin-top:8px}
+.contact{background:var(--ink);color:#fff;text-align:center}
+.contact .lead{color:#b9bec8;margin:0 auto 28px}
+.contact .ctas{justify-content:center}
+.contact .btn.ghost{background:transparent;color:#fff;border-color:#3a3f4a}
+footer{padding:24px 0;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<!-- ======= À MODIFIER : tes coordonnées (5 lignes) ======= -->
+<script>
+const MOI = {
+  nom: "Prénom Nom",
+  telephone: "06 00 00 00 00",
+  email: "contact@exemple.fr",
+  ville: "ta ville",
+  siret: "000 000 000 00000",
+};
+</script>
+<!-- ======================================================= -->
+
+<header><div class="wrap">
+  <div class="logo">Visibilité <span>Locale</span></div>
+  <a class="btn" data-tel href="#">Appeler</a>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>Vos clients vous cherchent sur Google.<br><em>Ils trouvent vos concurrents.</em></h1>
+  <p>J'aide les artisans et commerces de <span data-ville></span> à obtenir plus d'avis, une meilleure note et plus d'appels depuis Google Maps. Vous continuez votre métier, je m'occupe du reste.</p>
+  <div class="ctas">
+    <a class="btn" href="#contact">Recevoir mon audit gratuit</a>
+    <a class="btn ghost" href="#prix">Voir le tarif</a>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Le problème</h2>
+  <p class="lead">Quand quelqu'un tape « plombier » ou « coiffeur » suivi de sa ville, il appelle presque toujours l'un des 3 premiers résultats de la carte. Ceux-là ont en général plus d'avis, plus de photos et une fiche active. Pas forcément un meilleur travail.</p>
+  <div class="grid">
+    <div class="card"><b>Pas assez d'avis</b><p>Vos clients sont contents, mais personne ne leur demande de le dire sur Google.</p></div>
+    <div class="card"><b>Fiche incomplète</b><p>Services, photos, description, horaires : chaque case vide vous fait perdre des places.</p></div>
+    <div class="card"><b>Fiche inactive</b><p>Pas de publication, avis sans réponse : pour Google, c'est une entreprise qui dort.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>Comment ça marche</h2>
+  <p class="lead">Trois étapes, sans engagement.</p>
+  <div class="grid">
+    <div class="card"><div class="num">1</div><b>Audit gratuit</b><p>Je compare votre fiche à celle de vos concurrents et je vous montre ce qui bloque. Gratuit, et vous gardez le rapport.</p></div>
+    <div class="card"><div class="num">2</div><b>Mise en place en 48 h</b><p>Fiche optimisée, photos, mini-site internet, et un kit pour que vos clients laissent un avis en 30 secondes.</p></div>
+    <div class="card"><div class="num">3</div><b>Suivi chaque mois</b><p>Je réponds à vos avis, je publie sur votre fiche et je vous envoie les chiffres chaque mois : avis, note, appels.</p></div>
+  </div>
+</div></section>
+
+<section id="prix"><div class="wrap">
+  <div class="prix">
+    <h2>Un tarif simple</h2>
+    <div class="montant">149 € <small>/ mois</small></div>
+    <p style="color:var(--muted)">+ 190 € de mise en place · sans engagement</p>
+    <ul>
+      <li>Fiche Google entièrement optimisée</li>
+      <li>Kit avis : affiche QR code + messages prêts à envoyer</li>
+      <li>Réponse à tous vos avis sous 48 h</li>
+      <li>4 publications Google par mois</li>
+      <li>Mini-site internet inclus</li>
+      <li>Rapport mensuel avec vos chiffres</li>
+    </ul>
+    <a class="btn" href="#contact">Commencer par l'audit gratuit</a>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap" style="max-width:760px">
+  <h2>Questions fréquentes</h2>
+  <details><summary>Je suis engagé combien de temps ?</summary><p>Aucune durée minimale. Vous arrêtez quand vous voulez, avec effet à la fin du mois.</p></details>
+  <details><summary>Vous garantissez la 1ʳᵉ place ?</summary><p>Non, et personne ne peut honnêtement le garantir : le classement dépend de Google. Je garantis le travail fait chaque mois et des chiffres transparents pour juger vous-même.</p></details>
+  <details><summary>Vous achetez de faux avis ?</summary><p>Jamais. C'est interdit et Google peut suspendre votre fiche. Je vous aide à obtenir de vrais avis de vos vrais clients.</p></details>
+  <details><summary>Ma fiche m'appartient toujours ?</summary><p>Oui, à 100 %. Vous m'ajoutez comme gestionnaire, et vous pouvez retirer mon accès à tout moment.</p></details>
+  <details><summary>J'ai très peu de temps.</summary><p>Il vous faut 30 minutes au début (accès et photos). Ensuite, votre seul travail est d'envoyer le message d'avis à vos clients.</p></details>
+</div></section>
+
+<section id="contact" class="contact"><div class="wrap">
+  <h2>Votre audit gratuit en 24 h</h2>
+  <p class="lead">Appelez ou écrivez-moi avec le nom de votre entreprise. Je vous envoie votre audit sous 24 h, sans engagement.</p>
+  <div class="ctas">
+    <a class="btn" data-tel data-tel-num href="#">Appeler</a>
+    <a class="btn ghost" data-mail href="#">Écrire un email</a>
+  </div>
+</div></section>
+
+<footer><span data-nom></span> · Entrepreneur individuel · SIRET <span data-siret></span> · <span data-email></span></footer>
+
+<script>
+const telLien = "tel:" + MOI.telephone.replace(/\s/g, "");
+document.querySelectorAll("[data-tel]").forEach(a => { a.href = telLien; });
+document.querySelectorAll("[data-tel-num]").forEach(a => { a.textContent = "Appeler le " + MOI.telephone; });
+document.querySelectorAll("[data-mail]").forEach(a => { a.href = "mailto:" + MOI.email + "?subject=" + encodeURIComponent("Audit gratuit"); });
+document.querySelectorAll("[data-ville]").forEach(e => e.textContent = MOI.ville);
+document.querySelectorAll("[data-nom]").forEach(e => e.textContent = MOI.nom);
+document.querySelectorAll("[data-siret]").forEach(e => e.textContent = MOI.siret);
+document.querySelectorAll("[data-email]").forEach(e => e.textContent = MOI.email);
+</script>
+</body>
+</html>
