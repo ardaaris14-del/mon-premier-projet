@@ -101,9 +101,10 @@ for (const s of STATUTS) document.getElementById("fs").insertAdjacentHTML("befor
 
 function numero(t) {
   const c = String(t || "").replace(/[^\d+]/g, "");
-  if (/^0\d{9}$/.test(c)) return "+33" + c.slice(1);
-  return c.startsWith("0033") ? "+" + c.slice(2) : c;
+  if (/^0\d{9}$/.test(c)) return "+" + (D.indicatif || "33") + c.slice(1);
+  return c.startsWith("00") ? "+" + c.slice(2) : c;
 }
+const MOBILE = { CH: /^\+417[5-9]\d{7}$/, FR: /^\+33[67]\d{8}$/ };
 function remplir(modele, p) {
   const lien = p.kit ? new URL("../" + p.kit, location.href).href : "";
   const v = { nom: p.nom, lien, moi: D.moi.nom, tel: D.moi.telephone, ville: p.ville || "", metier: (D.metiers[p.metier] || p.metier).toLowerCase() };
@@ -128,20 +129,24 @@ function filtres() {
 
 function carte(p) {
   const tel = numero(p.telephone), s = statut(p.id);
-  const mobile = /^\+33[67]\d{8}$/.test(tel);
+  const mobile = (MOBILE[D.pays] || MOBILE.FR).test(tel);
+  const suisse = D.pays === "CH";
+  const accord = suisse ? " (après accord)" : "";
   const nouveau = jours(p.premiere_detection, D.genere_le) <= 7;
   const a = [];
   if (p.kit) a.push(`<a class="prim" target="_blank" href="../${esc(p.kit)}">Voir son kit</a>`);
   a.push(`<a target="_blank" href="https://www.google.com/search?q=${enc(p.nom + " " + (p.ville || ""))}">Google</a>`);
+  if (suisse) a.push(`<a target="_blank" href="https://search.ch/tel/?was=${enc(p.nom)}&wo=${enc(p.ville || "")}">Annuaire</a>`);
   if (tel) a.push(`<a data-c href="tel:${esc(tel)}">Appeler</a>`);
-  if (tel && p.kit) a.push(`<a data-c href="sms:${esc(tel)}?&body=${enc(remplir(D.messages.sms, p))}">SMS</a>`);
-  if (mobile && p.kit) a.push(`<a data-c target="_blank" href="https://wa.me/${tel.slice(1)}?text=${enc(remplir(D.messages.sms, p))}">WhatsApp</a>`);
-  if (p.email && p.kit) a.push(`<a data-c href="mailto:${esc(p.email)}?subject=${enc(remplir(D.messages.email_objet, p))}&body=${enc(remplir(D.messages.email, p))}">Email</a>`);
+  if (tel && p.kit) a.push(`<a data-c href="sms:${esc(tel)}?&body=${enc(remplir(D.messages.sms, p))}">SMS${accord}</a>`);
+  if (mobile && p.kit) a.push(`<a data-c target="_blank" href="https://wa.me/${tel.slice(1)}?text=${enc(remplir(D.messages.sms, p))}">WhatsApp${accord}</a>`);
+  if (p.email && p.kit) a.push(`<a data-c href="mailto:${esc(p.email)}?subject=${enc(remplir(D.messages.email_objet, p))}&body=${enc(remplir(D.messages.email, p))}">Email${accord}</a>`);
   const tags = [...(nouveau ? ['<span class="tag new">Nouveau</span>'] : []), ...(p.raisons || []).map(r => `<span class="tag">${esc(r)}</span>`)];
   if (p.site_web) tags.push(`<a class="tag" target="_blank" href="${esc(/^https?:/.test(p.site_web) ? p.site_web : "https://" + p.site_web)}">A un site</a>`);
   return `<div class="p ${FINIS.includes(s) ? "fait" : ""}" data-id="${esc(p.id)}">
     <div class="ligne"><div><div class="nom">${esc(p.nom)}</div>
-      <div class="muted">${esc(D.metiers[p.metier] || p.metier)} · ${esc(p.adresse || p.ville)}${p.telephone ? " · " + esc(p.telephone) : ""}</div></div>
+      <div class="muted">${esc(D.metiers[p.metier] || p.metier)} · ${esc(p.adresse || p.ville)}${p.telephone ? " · " + esc(p.telephone) : ""}</div>
+      ${p.activite ? `<div class="muted" style="font-size:13px;margin-top:4px">${esc(p.activite.slice(0, 180))}${p.activite.length > 180 ? "…" : ""}</div>` : ""}</div>
       <select class="statut">${STATUTS.map(x => `<option ${x === s ? "selected" : ""}>${x}</option>`).join("")}</select></div>
     <div class="tags">${tags.join("")}</div>
     <div class="actions">${a.join("")}</div></div>`;

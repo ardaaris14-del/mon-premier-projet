@@ -60,7 +60,10 @@ const MOI = {
   telephone: "06 00 00 00 00",
   email: "contact@exemple.fr",
   ville: "ta ville",
-  siret: "000 000 000 00000",
+  siret: "",
+  prix_kit: 149,
+  prix_mois: 29,
+  devise: "€",
 };
 </script>
 <!-- ======================================================================================= -->
@@ -107,19 +110,19 @@ const MOI = {
   <div class="prix">
     <div class="offre main">
       <b>Kit de lancement</b>
-      <div class="montant">149 € <small>une fois</small></div>
+      <div class="montant"><span data-prix-kit></span> <small>une fois</small></div>
       <ul><li>Site en ligne + nom de domaine 1 an</li><li>Logo en fichiers HD</li><li>Carte de visite prête à imprimer</li><li>Fiche Google créée avec vous</li></ul>
     </div>
     <div class="offre">
       <b>Suivi (option)</b>
-      <div class="montant">29 € <small>/ mois</small></div>
+      <div class="montant"><span data-prix-mois></span> <small>/ mois</small></div>
       <ul><li>Hébergement et modifications</li><li>4 publications Google par mois</li><li>Réponse à vos avis</li><li>Sans engagement</li></ul>
     </div>
   </div>
 </div></section>
 
 <section class="partenaires"><div class="wrap">
-  <h2>Experts-comptables, banques, domiciliations : offrez-le</h2>
+  <h2>Fiduciaires, notaires, banques : offrez-le</h2>
   <p class="lead">Vos nouveaux clients créent leur entreprise avec vous. Offrez-leur leur kit de lancement : c'est un cadeau de bienvenue qui marque les esprits, et vous touchez une commission sur chaque kit activé.</p>
   <div class="grid">
     <div class="card"><b>Zéro travail</b><p>Vous nous transmettez le nom de l'entreprise, nous préparons le kit.</p></div>
@@ -130,7 +133,7 @@ const MOI = {
 
 <section class="alt"><div class="wrap" style="max-width:760px">
   <h2>Questions fréquentes</h2>
-  <details><summary>Comment avez-vous eu mes informations ?</summary><p>Le nom, l'adresse et l'activité des entreprises sont publics : ils sont publiés par l'État dans le répertoire SIRENE. Nous ne les utilisons que pour préparer votre kit, et un simple « stop » suffit pour qu'il soit supprimé.</p></details>
+  <details><summary>Comment avez-vous eu mes informations ?</summary><p>Le nom, l'adresse et l'activité des nouvelles entreprises sont publics : ils sont publiés officiellement par le registre du commerce. Nous ne les utilisons que pour préparer votre kit, et un simple « stop » suffit pour qu'il soit supprimé.</p></details>
   <details><summary>Je ne suis pas obligé d'acheter ?</summary><p>Non. Le kit a été préparé à nos frais. S'il ne vous plaît pas, vous ne payez rien.</p></details>
   <details><summary>Le site m'appartient ?</summary><p>Oui. Le nom de domaine est à votre nom et vous pouvez récupérer les fichiers à tout moment.</p></details>
   <details><summary>Et si je veux changer des choses ?</summary><p>Textes, couleurs, photos, logo : on ajuste ensemble avant la mise en ligne. C'est compris dans le prix.</p></details>
@@ -145,7 +148,7 @@ const MOI = {
   </div>
 </div></section>
 
-<footer><span data-nom></span> · Jour Un · Entrepreneur individuel · SIRET <span data-siret></span> · <span data-email></span></footer>
+<footer><span data-nom></span> · Jour Un · Entreprise individuelle<span data-siret-bloc> · N° <span data-siret></span></span> · <span data-email></span></footer>
 
 <script>
 const telLien = "tel:" + MOI.telephone.replace(/\s/g, "");
@@ -154,6 +157,9 @@ document.querySelectorAll("[data-tel-num]").forEach(a => { a.textContent = "Appe
 document.querySelectorAll("[data-mail]").forEach(a => { a.href = "mailto:" + MOI.email + "?subject=" + encodeURIComponent("Mon kit de lancement"); });
 document.querySelectorAll("[data-nom]").forEach(e => e.textContent = MOI.nom);
 document.querySelectorAll("[data-siret]").forEach(e => e.textContent = MOI.siret);
+document.querySelectorAll("[data-siret-bloc]").forEach(e => { e.hidden = !MOI.siret; });
+document.querySelectorAll("[data-prix-kit]").forEach(e => e.textContent = MOI.prix_kit + " " + MOI.devise);
+document.querySelectorAll("[data-prix-mois]").forEach(e => e.textContent = MOI.prix_mois + " " + MOI.devise);
 document.querySelectorAll("[data-email]").forEach(e => e.textContent = MOI.email);
 </script>
 </body>

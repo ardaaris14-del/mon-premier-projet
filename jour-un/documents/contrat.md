@@ -2,10 +2,10 @@
 
 *Modèle simple, à adapter. En cas de doute, fais-le relire par un professionnel du droit. À envoyer au client avec le lien de paiement.*
 
-**Prestataire :** [Ton nom], entrepreneur individuel, SIRET [numéro], [adresse], [email], [téléphone].
-**Client :** [Raison sociale], SIRET [numéro], [adresse], représentée par [nom].
+**Prestataire :** Arda Aris, Jour Un, entreprise individuelle, [adresse], 2345 Les Breuleux, ardaaris14@gmail.com, 076 698 40 59.
+**Client :** [Raison sociale], IDE [CHE-…], [adresse], représentée par [nom].
 
-## 1. Kit de lancement — 149 € (paiement unique)
+## 1. Kit de lancement — CHF 290 (paiement unique)
 Le Prestataire livre, sous 5 jours ouvrés après réception du paiement et des informations demandées :
 - un site internet d'une page, adapté aux téléphones, mis en ligne sur le nom de domaine choisi par le Client ;
 - l'enregistrement du nom de domaine **au nom du Client**, pour une durée d'un an ;
@@ -15,13 +15,13 @@ Le Prestataire livre, sous 5 jours ouvrés après réception du paiement et des 
 
 Deux séries de modifications (textes, couleurs, photos, logo) sont comprises avant la mise en ligne.
 
-## 2. Suivi — 29 € par mois (option, sans engagement)
+## 2. Suivi — CHF 39 par mois (option, sans engagement)
 Hébergement du site, modifications courantes (dans la limite d'une heure par mois), 4 publications par mois sur la fiche Google,
 réponse aux avis. Prélèvement mensuel. Résiliable à tout moment par email, avec effet à la fin du mois en cours.
 Sans suivi, le Client reçoit les fichiers de son site pour l'héberger où il le souhaite.
 
 ## 3. Paiement
-TVA non applicable, article 293 B du CGI. Le kit est payable à la commande. Le suivi est prélevé chaque mois ;
+Le Prestataire n'est pas assujetti à la TVA (chiffre d'affaires inférieur à CHF 100 000). Le kit est payable à la commande. Le suivi est prélevé chaque mois ;
 en cas de défaut de paiement, il est suspendu après une relance restée sans effet pendant 8 jours.
 
 ## 4. Propriété
@@ -34,9 +34,9 @@ Google dépend de Google, et **aucune position n'est garantie**. Le Prestataire 
 
 ## 6. Données personnelles
 Le Prestataire utilise les données du Client uniquement pour exécuter la prestation, et les supprime sur simple demande
-à la fin de la relation, sauf obligations légales (facturation).
+à la fin de la relation, sauf obligations légales (conservation des pièces comptables), conformément à la loi fédérale sur la protection des données (LPD).
 
-Commande acceptée le [date] par paiement en ligne ou par signature :
+Droit suisse applicable. Commande acceptée le [date] par paiement ou par signature :
 
 | Le Prestataire | Le Client (« Bon pour accord ») |
 |---|---|

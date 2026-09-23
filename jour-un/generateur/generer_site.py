@@ -27,10 +27,12 @@ def carte(titre, texte):
     return f'<div class="card"><h3>{e(titre)}</h3><p>{e(texte)}</p></div>'
 
 
-def lien_tel(tel):
+def lien_tel(tel, indicatif="33"):
     chiffres = "".join(c for c in tel if c.isdigit() or c == "+")
+    if chiffres.startswith("00"):
+        return "+" + chiffres[2:]
     if chiffres.startswith("0") and len(chiffres) == 10:
-        return "+33" + chiffres[1:]
+        return f"+{indicatif}{chiffres[1:]}"
     return chiffres
 
 
@@ -40,7 +42,7 @@ def rendre(data, origine="config"):
         raise ValueError(f"{origine} : champs manquants -> {', '.join(manquants)}")
 
     tel = data["telephone"]
-    tel_lien = lien_tel(tel)
+    tel_lien = lien_tel(tel, data.get("indicatif", "33"))
 
     services = "".join(carte(s["titre"], s["texte"]) for s in data["services"])
 

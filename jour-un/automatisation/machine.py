@@ -24,10 +24,11 @@ sys.path.insert(0, str(RACINE / "generateur"))
 import generer_site  # noqa: E402
 import kit  # noqa: E402
 import sources  # noqa: E402
-from metiers import METIERS, SAISONS  # noqa: E402
+from metiers import METIERS, SAISONS, classer  # noqa: E402
 
 DONNEES = ICI / "donnees"
 ITERATIONS = 250_000
+INDICATIFS = {"FR": "33", "CH": "41"}
 
 
 def lire_json(chemin, defaut):
@@ -45,9 +46,16 @@ def log(*args):
 
 # ---------- Prospection ----------
 
+def metiers_actifs(config):
+    choix = config["zone"].get("metiers", "tous")
+    return list(METIERS) if choix == "tous" else [m for m in choix if m in METIERS]
+
+
 def collecter(config, aujourdhui):
+    if config.get("pays", "FR") == "CH":
+        return collecter_suisse(config, aujourdhui)
     trouves = []
-    metiers = [m for m in config["zone"]["metiers"] if m in METIERS]
+    metiers = metiers_actifs(config)
     tag_vers_metier = {tag: m for m in metiers for tag in METIERS[m]["osm"]}
     cle = os.environ.get("INSEE_API_KEY", "").strip()
     depuis = (aujourdhui - timedelta(days=config.get("age_max_jours", 90))).isoformat()
@@ -82,6 +90,50 @@ def collecter(config, aujourdhui):
     return trouves
 
 
+def collecter_suisse(config, aujourdhui):
+    trouves = []
+    zone = config["zone"]
+    langues = set(zone.get("langues", ["fr"]))
+    depuis = (aujourdhui - timedelta(days=config.get("age_max_jours", 45))).isoformat()
+    vus = set(lire_json(DONNEES / "fosc_vus.json", []))
+    budget = config.get("fosc_max_details", 1500)
+    for canton in zone["cantons"]:
+        try:
+            metas = sources.fosc_liste(canton, depuis, aujourdhui.isoformat())
+        except Exception as err:
+            log(f"  FOSC {canton} : échec ({err})")
+            continue
+        nouvelles = [m for m in metas if m.get("subRubric") == "HR01" and m.get("language") in langues and m["id"] not in vus]
+        log(f"  FOSC {canton} : {len(metas)} publications, {len(nouvelles)} nouvelles inscriptions à lire")
+        for meta in nouvelles:
+            if budget <= 0:
+                break
+            budget -= 1
+            try:
+                p = sources.parse_fosc(sources.fosc_detail(meta["id"]), classer)
+            except Exception as err:
+                log(f"  FOSC détail {meta['id']} : échec ({err})")
+                continue
+            vus.add(meta["id"])
+            if p:
+                trouves.append(p)
+            time.sleep(0.25)
+    ecrire_json(DONNEES / "fosc_vus.json", sorted(vus))
+
+    tags = sorted({tag for m in metiers_actifs(config) for tag in METIERS[m]["osm"]})
+    tag_vers_metier = {tag: m for m in metiers_actifs(config) for tag in METIERS[m]["osm"]}
+    for canton in zone["cantons"]:
+        try:
+            trouves += sources.parse_osm(sources.osm_canton(canton, tags), tag_vers_metier, "")
+        except Exception as err:
+            log(f"  OpenStreetMap {canton} : échec ({err})")
+    log(f"  {len(trouves)} fiches récupérées")
+    return trouves
+
+
+REGISTRES = {"sirene", "fosc"}
+
+
 def meme_entreprise(a, b):
     na, nb = sources.normaliser(a["nom"]), sources.normaliser(b["nom"])
     if len(na) < 4 or len(nb) < 4 or a["metier"] != b["metier"]:
@@ -93,12 +145,13 @@ def meme_entreprise(a, b):
 
 def fusionner(existants, nouveaux, aujourdhui):
     parid = {p["id"]: p for p in existants}
-    for n in sorted(nouveaux, key=lambda p: p["sources"] != ["sirene"]):
+    for n in sorted(nouveaux, key=lambda p: not REGISTRES & set(p["sources"])):
         cible = parid.get(n["id"])
         if cible is None and "osm" in n["sources"]:
-            cible = next((p for p in parid.values() if "sirene" in p["sources"] and meme_entreprise(p, n)), None)
+            cible = next((p for p in parid.values() if REGISTRES & set(p["sources"]) and meme_entreprise(p, n)), None)
         if cible is None:
-            parid[n["id"]] = {**n, "premiere_detection": aujourdhui}
+            if REGISTRES & set(n["sources"]):
+                parid[n["id"]] = {**n, "premiere_detection": aujourdhui}
             continue
         for champ in ("telephone", "email", "site_web", "adresse", "date_creation", "siret"):
             if n.get(champ) and not cible.get(champ):
@@ -145,9 +198,17 @@ def slug(p, secret=""):
 
 # ---------- Construction du site ----------
 
+def accroche(p, m):
+    if p["metier"] == "generique" and p.get("activite"):
+        phrase = re.split(r"(?<=[.;])\s", p["activite"].strip())[0].rstrip(".;")
+        return phrase[:1].upper() + phrase[1:220] + "."
+    return m["accroche"]
+
+
 def config_maquette(p, config):
     m = METIERS[p["metier"]]
     ville = p.get("ville") or "votre ville"
+    generique = p["metier"] == "generique"
     return {
         "slug": p["slug"],
         "maquette": True,
@@ -157,8 +218,9 @@ def config_maquette(p, config):
         "type_schema": m["schema"],
         "ville": ville,
         "rayon": "20 km",
-        "titre": f"{m['libelle']} à {ville}",
-        "accroche": m["accroche"],
+        "titre": f"{p['nom']}, à {ville}" if generique else f"{m['libelle']} à {ville}",
+        "accroche": accroche(p, m),
+        "indicatif": INDICATIFS[config.get("pays", "FR")],
         "apropos": f"{p['nom']}, {m['libelle'].lower()} à {ville}. Ici, votre histoire : vos années d'expérience, "
                    "votre façon de travailler, ce qui vous distingue. C'est ce qui donne confiance à vos futurs clients.",
         "telephone": p.get("telephone") or "Votre numéro",
@@ -181,7 +243,8 @@ def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_pa
         shutil.copy(RACINE / "outils" / f, sortie / "outils" / f)
 
     agence = (RACINE / "agence" / "index.html").read_text(encoding="utf-8")
-    moi = {k: config["moi"][k] for k in ("nom", "telephone", "email", "ville", "siret")}
+    moi = {k: config["moi"].get(k, "") for k in ("nom", "telephone", "email", "ville", "siret")}
+    moi.update({k: config["offre"][k] for k in ("prix_kit", "prix_mois")}, devise=config["offre"].get("devise", "€"))
     moi_js = json.dumps(moi, ensure_ascii=False).replace("</", "<\\/")
     agence = re.sub(r"const MOI = \{.*?\};", lambda _: f"const MOI = {moi_js};", agence, count=1, flags=re.S)
     (sortie / "index.html").write_text(agence, encoding="utf-8")
@@ -199,13 +262,15 @@ def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_pa
         (page / "index.html").write_text(kit.page_kit(p, config, f"../../m/{p['slug']}/"), encoding="utf-8")
         p["kit"] = f"k/{p['slug']}/"
 
-    champs = ("id", "nom", "metier", "ville", "adresse", "telephone", "email", "site_web",
+    champs = ("id", "nom", "metier", "activite", "ville", "adresse", "telephone", "email", "site_web",
               "date_creation", "premiere_detection", "score", "raisons", "kit")
     donnees = {
         "genere_le": aujourdhui.isoformat(),
         "moi": config["moi"],
         "messages": config["messages"],
         "metiers": {k: v["libelle"] for k, v in METIERS.items()},
+        "pays": config.get("pays", "FR"),
+        "indicatif": INDICATIFS[config.get("pays", "FR")],
         "prospects": [{c: p.get(c, "") for c in champs} for p in candidats],
         "clients": publications_clients(clients, aujourdhui),
     }

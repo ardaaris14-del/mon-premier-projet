@@ -87,6 +87,7 @@ def page_kit(p, config, lien_site):
         "posts": "".join(f'<div class="post"><b>{e(t)}</b><p>{e(x)}</p></div>' for t, x in premieres_publications(p)),
         "prix_kit": e(offre["prix_kit"]),
         "prix_mois": e(offre["prix_mois"]),
+        "devise": e(offre.get("devise", "€")),
         "lien_paiement": e(lien_paiement),
         "moi": e(moi["nom"]),
         "moi_tel": e(moi["telephone"]),

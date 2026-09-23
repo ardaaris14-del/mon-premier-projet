@@ -1,10 +1,13 @@
 """Données par métier : codes NAF (SIRENE), tags OpenStreetMap, contenu des maquettes et idées de publications."""
+import re
+
 
 HORAIRES_ARTISAN = {"Lundi – Vendredi": "8h – 18h", "Samedi": "Sur rendez-vous", "Dimanche": "Fermé"}
 HORAIRES_BOUTIQUE = {"Mardi – Vendredi": "9h – 19h", "Samedi": "9h – 18h", "Dimanche – Lundi": "Fermé"}
 
 METIERS = {
     "plombier": {
+        "mots": ["sanitaire", "plomberie", "plombier", "chauffage", "installations de chauffage", "ferblanterie"],
         "libelle": "Plombier chauffagiste",
         "naf": ["43.22A"],
         "osm": [("craft", "plumber"), ("craft", "hvac")],
@@ -27,6 +30,7 @@ METIERS = {
         },
     },
     "electricien": {
+        "mots": ["electricite", "electricien", "installations electriques", "domotique", "photovoltaique"],
         "libelle": "Électricien",
         "naf": ["43.21A"],
         "osm": [("craft", "electrician")],
@@ -49,6 +53,7 @@ METIERS = {
         },
     },
     "peintre": {
+        "mots": ["peinture", "peintre", "platrerie", "gypserie", "decoration interieure"],
         "libelle": "Peintre en bâtiment",
         "naf": ["43.34Z"],
         "osm": [("craft", "painter")],
@@ -71,6 +76,7 @@ METIERS = {
         },
     },
     "menuisier": {
+        "mots": ["menuiserie", "menuisier", "ebenisterie", "charpente", "agencement"],
         "libelle": "Menuisier",
         "naf": ["43.32A", "16.23Z"],
         "osm": [("craft", "carpenter"), ("craft", "joiner")],
@@ -93,6 +99,7 @@ METIERS = {
         },
     },
     "couvreur": {
+        "mots": ["couverture", "couvreur", "toiture", "toitures", "etancheite"],
         "libelle": "Couvreur",
         "naf": ["43.91B"],
         "osm": [("craft", "roofer")],
@@ -115,6 +122,7 @@ METIERS = {
         },
     },
     "coiffeur": {
+        "mots": ["coiffure", "coiffeur", "coiffeuse", "barbier", "barber"],
         "libelle": "Salon de coiffure",
         "naf": ["96.02A"],
         "osm": [("shop", "hairdresser")],
@@ -137,6 +145,7 @@ METIERS = {
         },
     },
     "estheticienne": {
+        "mots": ["esthetique", "estheticienne", "institut de beaute", "beaute", "onglerie", "ongles", "cosmetique", "massage", "maquillage", "soins du corps"],
         "libelle": "Institut de beauté",
         "naf": ["96.02B"],
         "osm": [("shop", "beauty")],
@@ -159,6 +168,7 @@ METIERS = {
         },
     },
     "garage": {
+        "mots": ["garage", "automobile", "automobiles", "vehicules", "carrosserie", "mecanique", "pneus"],
         "libelle": "Garage automobile",
         "naf": ["45.20A", "45.20B"],
         "osm": [("shop", "car_repair")],
@@ -180,7 +190,172 @@ METIERS = {
             "automne": "Vérifiez votre batterie avant l'hiver : c'est la première cause de panne au premier froid.",
         },
     },
+    "macon": {
+        "libelle": "Maçonnerie et construction",
+        "mots": ["maconnerie", "macon", "construction", "genie civil", "gros oeuvre", "beton", "renovation", "transformation de batiments"],
+        "naf": ["43.99C", "41.20A"], "osm": [("craft", "builder")], "schema": "GeneralContractor", "couleur": "#6b4f2a",
+        "accroche": "Construction, rénovation et transformation : un maçon local, des délais tenus et un chantier propre.",
+        "badges": ["Devis gratuit", "Travail soigné", "Entreprise locale"],
+        "services": [("Rénovation", "Transformation et rénovation de maisons et d'appartements."),
+                     ("Maçonnerie", "Murs, dalles, ouvertures, petits et gros travaux."),
+                     ("Aménagements extérieurs", "Murets, terrasses, accès et pavage."),
+                     ("Petits travaux", "Réparations et interventions rapides.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "L'hiver est le bon moment pour planifier vos travaux du printemps : les agendas se remplissent vite.",
+                     "printemps": "Printemps = saison des chantiers extérieurs : pensez aux autorisations de construire à l'avance.",
+                     "ete": "Un chantier d'été se prépare tôt : réservez votre créneau dès maintenant.",
+                     "automne": "Avant le gel, faites vérifier les fissures de vos murs extérieurs pour éviter les infiltrations."}},
+    "carreleur": {
+        "libelle": "Carreleur",
+        "mots": ["carrelage", "carreleur", "revetements de sols", "chape"],
+        "naf": ["43.33Z"], "osm": [("craft", "tiler")], "schema": "HomeAndConstructionBusiness", "couleur": "#0f766e",
+        "accroche": "Carrelage, faïence, sols et salles de bain : des finitions précises, posées par un artisan local.",
+        "badges": ["Devis gratuit", "Finitions soignées", "Artisan local"],
+        "services": [("Carrelage", "Pose de carrelage intérieur et extérieur."),
+                     ("Salles de bain", "Faïence, douches à l'italienne, rénovation complète."),
+                     ("Sols", "Chapes, revêtements, parquets et sols techniques."),
+                     ("Terrasses", "Dallage et carrelage extérieur résistant au gel.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "Pour l'extérieur, choisissez un carrelage résistant au gel : c'est indispensable en montagne.",
+                     "printemps": "Une salle de bain se rénove en une à deux semaines : planifiez avant l'été.",
+                     "ete": "Un joint abîmé laisse passer l'eau : faites-le refaire avant qu'il n'abîme le support.",
+                     "automne": "Nettoyez et imperméabilisez votre terrasse avant l'hiver pour la protéger du gel."}},
+    "paysagiste": {
+        "libelle": "Paysagiste",
+        "mots": ["paysagiste", "paysagisme", "jardin", "jardins", "jardinage", "espaces verts", "horticulture", "elagage"],
+        "naf": ["81.30Z"], "osm": [("craft", "gardener")], "schema": "LandscapingBusiness", "couleur": "#15803d",
+        "accroche": "Création et entretien de jardins : un paysagiste local pour des extérieurs beaux toute l'année.",
+        "badges": ["Devis gratuit", "Entretien régulier", "Entreprise locale"],
+        "services": [("Entretien", "Tonte, taille des haies, désherbage, entretien régulier."),
+                     ("Création", "Aménagement de jardins, plantations, gazon."),
+                     ("Élagage", "Taille et abattage d'arbres en toute sécurité."),
+                     ("Aménagements", "Terrasses, dallages, murets et clôtures.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "L'hiver est idéal pour la taille des arbres fruitiers et la préparation de vos projets.",
+                     "printemps": "C'est le moment de scarifier et de semer votre gazon pour un jardin vert tout l'été.",
+                     "ete": "Arrosez tôt le matin ou tard le soir : moins d'évaporation, des plantes en meilleure santé.",
+                     "automne": "L'automne est la meilleure saison pour planter arbres et arbustes."}},
+    "nettoyage": {
+        "libelle": "Entreprise de nettoyage",
+        "mots": ["nettoyage", "nettoyages", "conciergerie", "entretien de batiments", "entretien de locaux", "lavage"],
+        "naf": ["81.21Z"], "osm": [("shop", "dry_cleaning")], "schema": "HousekeepingService", "couleur": "#0284c7",
+        "accroche": "Nettoyage de bureaux, d'appartements et fins de bail : un travail impeccable, des horaires flexibles.",
+        "badges": ["Devis gratuit", "Horaires flexibles", "Entreprise locale"],
+        "services": [("Fins de bail", "Nettoyage complet avec garantie de remise."),
+                     ("Bureaux", "Entretien régulier de vos locaux professionnels."),
+                     ("Particuliers", "Ménage régulier ou ponctuel."),
+                     ("Vitres", "Nettoyage de vitres, stores et façades vitrées.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "Le chauffage assèche l'air et fait voler la poussière : aérez 10 minutes chaque jour.",
+                     "printemps": "Le grand nettoyage de printemps, c'est maintenant : vitres, stores et placards.",
+                     "ete": "Vous déménagez ? Réservez votre nettoyage de fin de bail tôt : c'est la haute saison.",
+                     "automne": "Avant l'hiver, nettoyez vitres et stores pour profiter de toute la lumière."}},
+    "restaurant": {
+        "libelle": "Restaurant",
+        "mots": ["restaurant", "restauration", "cafe", "bar", "pizzeria", "traiteur", "snack", "kebab", "boulangerie", "patisserie", "food truck", "cuisine"],
+        "naf": ["56.10A"], "osm": [("amenity", "restaurant"), ("amenity", "cafe")], "schema": "Restaurant", "couleur": "#b45309",
+        "accroche": "Une cuisine faite maison, un accueil chaleureux : venez nous découvrir.",
+        "badges": ["Fait maison", "Produits locaux", "À emporter"],
+        "services": [("Sur place", "Une carte de saison dans un cadre convivial."),
+                     ("À emporter", "Commandez par téléphone, récupérez sans attendre."),
+                     ("Menu du jour", "Un menu différent chaque jour de la semaine."),
+                     ("Événements", "Repas de groupe, anniversaires et apéritifs.")],
+        "horaires": HORAIRES_BOUTIQUE,
+        "conseils": {"hiver": "Nos plats d'hiver sont de retour : venez vous réchauffer !",
+                     "printemps": "Nouvelle carte de printemps avec les produits de saison.",
+                     "ete": "La terrasse est ouverte : profitez des beaux jours avec nous.",
+                     "automne": "La chasse et les produits d'automne arrivent à la carte."}},
+    "transport": {
+        "libelle": "Transport et déménagement",
+        "mots": ["demenagement", "demenagements", "transport", "transports", "livraison", "logistique", "taxi", "coursier"],
+        "naf": ["49.42Z"], "osm": [("shop", "moving")], "schema": "MovingCompany", "couleur": "#1d4ed8",
+        "accroche": "Déménagements, transports et livraisons : ponctuels, soigneux et au juste prix.",
+        "badges": ["Devis gratuit", "Assurance incluse", "Entreprise locale"],
+        "services": [("Déménagements", "Particuliers et entreprises, avec ou sans emballage."),
+                     ("Transports", "Transport de marchandises et d'objets volumineux."),
+                     ("Débarras", "Vidage de caves, greniers et appartements."),
+                     ("Livraisons", "Livraisons régionales rapides.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "Déménager en hiver, c'est souvent moins cher et plus facile à réserver.",
+                     "printemps": "Les fins de mois de printemps partent vite : réservez votre date à l'avance.",
+                     "ete": "L'été est la haute saison des déménagements : réservez au moins un mois avant.",
+                     "automne": "Profitez de l'automne pour débarrasser cave et grenier avant l'hiver."}},
+    "informatique": {
+        "libelle": "Services informatiques",
+        "mots": ["informatique", "logiciel", "logiciels", "developpement web", "site internet", "sites web", "digital", "numerique", "reseaux informatiques"],
+        "naf": ["62.02A"], "osm": [("shop", "computer")], "schema": "ProfessionalService", "couleur": "#4f46e5",
+        "accroche": "Dépannage, installation et solutions informatiques pour les particuliers et les PME de la région.",
+        "badges": ["Intervention rapide", "À domicile", "Entreprise locale"],
+        "services": [("Dépannage", "Ordinateurs, imprimantes, réseaux, à domicile ou à distance."),
+                     ("PME", "Installation, sauvegardes et maintenance de votre parc informatique."),
+                     ("Sécurité", "Antivirus, sauvegardes et protection de vos données."),
+                     ("Formation", "Prise en main de vos outils, à votre rythme.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "Faites une sauvegarde complète de vos données : un disque dur ne prévient pas avant de lâcher.",
+                     "printemps": "Grand ménage numérique : supprimez les logiciels inutiles, votre ordinateur vous dira merci.",
+                     "ete": "En vacances, méfiez-vous des Wi-Fi publics : évitez d'y consulter votre banque.",
+                     "automne": "Vérifiez vos mises à jour : elles corrigent des failles de sécurité importantes."}},
+    "fitness": {
+        "libelle": "Coach sportif",
+        "mots": ["fitness", "coaching sportif", "coach", "salle de sport", "yoga", "pilates", "sport", "entrainement", "dietetique", "nutrition"],
+        "naf": ["93.13Z"], "osm": [("leisure", "fitness_centre")], "schema": "HealthClub", "couleur": "#dc2626",
+        "accroche": "Coaching personnalisé pour atteindre vos objectifs, à votre rythme.",
+        "badges": ["Séance d'essai", "Programme sur mesure", "Coach diplômé"],
+        "services": [("Coaching individuel", "Un programme adapté à vos objectifs et à votre niveau."),
+                     ("Cours collectifs", "Des séances en petits groupes, motivantes et conviviales."),
+                     ("Remise en forme", "Reprendre le sport en douceur et en sécurité."),
+                     ("Nutrition", "Des conseils simples pour mieux manger au quotidien.")],
+        "horaires": HORAIRES_BOUTIQUE,
+        "conseils": {"hiver": "Le froid n'est pas une excuse : 20 minutes d'exercice à la maison suffisent pour garder le rythme.",
+                     "printemps": "C'est le moment de reprendre : fixez-vous un objectif simple pour les 8 prochaines semaines.",
+                     "ete": "Par forte chaleur, entraînez-vous tôt le matin et hydratez-vous bien.",
+                     "automne": "La rentrée est le meilleur moment pour prendre de bonnes habitudes."}},
+    "photographe": {
+        "libelle": "Photographe",
+        "mots": ["photographie", "photographe", "photo", "video", "videaste", "audiovisuel"],
+        "naf": ["74.20Z"], "osm": [("craft", "photographer")], "schema": "ProfessionalService", "couleur": "#111827",
+        "accroche": "Mariages, portraits, entreprises : des images qui racontent votre histoire.",
+        "badges": ["Devis gratuit", "Retouches incluses", "Photographe local"],
+        "services": [("Mariages", "Reportage complet de votre journée."),
+                     ("Portraits", "Portraits, familles et photos professionnelles."),
+                     ("Entreprises", "Photos de produits, d'équipes et de locaux."),
+                     ("Vidéo", "Films courts pour vos réseaux sociaux.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "Les séances photo d'hiver en extérieur donnent des lumières magnifiques : osez !",
+                     "printemps": "Mariage cet été ? Les photographes se réservent maintenant.",
+                     "ete": "La lumière du soir, une heure avant le coucher du soleil, est la plus flatteuse.",
+                     "automne": "Les couleurs d'automne sont idéales pour les photos de famille."}},
+    "generique": {
+        "libelle": "Entreprise",
+        "mots": [],
+        "naf": [], "osm": [], "schema": "LocalBusiness", "couleur": "#334155",
+        "accroche": "Une entreprise locale, sérieuse et joignable, au service de ses clients.",
+        "badges": ["Devis gratuit", "Réponse rapide", "Entreprise locale"],
+        "services": [("Nos prestations", "Présentez ici votre activité principale."),
+                     ("Sur mesure", "Une solution adaptée à chaque client."),
+                     ("Conseil", "Un interlocuteur unique qui prend le temps de vous écouter."),
+                     ("Proximité", "Une entreprise de votre région, facile à joindre.")],
+        "horaires": HORAIRES_ARTISAN,
+        "conseils": {"hiver": "Nous restons à votre disposition tout l'hiver : n'hésitez pas à nous contacter.",
+                     "printemps": "Le printemps est là : c'est le bon moment pour lancer vos projets.",
+                     "ete": "Pensez à nous contacter avant les vacances pour planifier vos projets de la rentrée.",
+                     "automne": "La rentrée est l'occasion de faire le point : parlons de vos besoins."}},
 }
 
 SAISONS = {12: "hiver", 1: "hiver", 2: "hiver", 3: "printemps", 4: "printemps", 5: "printemps",
            6: "ete", 7: "ete", 8: "ete", 9: "automne", 10: "automne", 11: "automne"}
+
+EXCLUSIONS = ["holding", "participations", "prise de participation", "gestion de fortune", "gestion de patrimoine",
+              "detention de", "en liquidation", "fondation", "association"]
+
+
+def classer(texte):
+    """Devine le métier à partir du but social ; None si l'entreprise n'est pas une cible."""
+    from sources import normaliser
+    t = normaliser(texte).lower()
+    trouve = lambda mot: len(re.findall(r"\b" + re.escape(mot) + r"s?\b", t))  # noqa: E731
+    if any(trouve(x) for x in EXCLUSIONS):
+        return None
+    scores = {m: sum(trouve(mot) for mot in v["mots"]) for m, v in METIERS.items()}
+    meilleur = max(scores, key=lambda m: scores[m])
+    return meilleur if scores[meilleur] else "generique"

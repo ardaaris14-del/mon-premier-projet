@@ -5,6 +5,7 @@ import re
 import sys
 import tempfile
 import unittest
+from xml.sax.saxutils import escape
 from datetime import date
 from pathlib import Path
 
@@ -96,7 +97,7 @@ class Machine(unittest.TestCase):
         ps = {p["id"]: p for p in self.prospects()}
         self.assertTrue(machine.eligible_kit(ps["s-912345678"], AUJOURDHUI, 90))
         self.assertFalse(machine.eligible_kit(ps["s-333333333"], AUJOURDHUI, 90))
-        self.assertFalse(machine.eligible_kit(ps["o-w7"], AUJOURDHUI, 90))
+        self.assertNotIn("o-w7", ps)
 
     def test_construction_du_site(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -147,6 +148,76 @@ class Machine(unittest.TestCase):
         p = {"nom": "Plomberie Durand", "id": "s-912345678"}
         self.assertNotEqual(machine.slug(p, "a"), machine.slug(p, "b"))
         self.assertTrue(machine.slug(p, "a").startswith("plomberie-durand-"))
+
+
+def xml_fosc(nom, but, forme="0107", uid="123456789", ville="Saignelégier", date_pub="2026-09-21"):
+    nom, but = escape(nom), escape(but)
+    return f"""<?xml version='1.0' encoding='UTF-8'?>
+<HR01:publication xmlns:HR01="https://shab.ch/shab/HR01-export">
+<meta><id>x</id><subRubric>HR01</subRubric><language>fr</language><publicationDate>{date_pub}</publicationDate></meta>
+<content><commonsNew><company><name>{nom}</name><uid>CHE-{uid[:3]}.{uid[3:6]}.{uid[6:]}</uid>
+<uidOrganisationId>{uid}</uidOrganisationId><seat>{ville}</seat><legalForm>{forme}</legalForm>
+<address><street>Rue de la Gare</street><houseNumber>4</houseNumber><swissZipCode>2350</swissZipCode><town>{ville}</town></address>
+</company><purpose>{but} (cf. statuts pour but complet).</purpose></commonsNew></content></HR01:publication>"""
+
+
+class Suisse(unittest.TestCase):
+    def test_parse_fosc(self):
+        p = sources.parse_fosc(xml_fosc("Salon Léa, Léa Martin", "Exploitation d'un salon de coiffure", forme="0101"), machine.classer)
+        self.assertEqual(p["id"], "c-123456789")
+        self.assertEqual(p["nom"], "Salon Léa")
+        self.assertEqual(p["metier"], "coiffeur")
+        self.assertEqual(p["adresse"], "Rue de la Gare 4, 2350 Saignelégier")
+        self.assertEqual(p["date_creation"], "2026-09-21")
+        self.assertNotIn("cf. statuts", p["activite"])
+
+    def test_fosc_exclusions(self):
+        self.assertIsNone(sources.parse_fosc(xml_fosc("Alpha Holding SA", "Prise de participations", "0106"), machine.classer))
+        self.assertIsNone(sources.parse_fosc(xml_fosc("X SA, succursale de Delémont", "Vente", "0151"), machine.classer))
+        self.assertIsNone(sources.parse_fosc(xml_fosc("Club des amis", "Promotion du sport", "0109"), machine.classer))
+
+    def test_generique_utilise_le_but_social(self):
+        p = sources.parse_fosc(xml_fosc("C&S Epicerie", "Achat et vente de produits alimentaires; exploitation d'une épicerie"), machine.classer)
+        self.assertEqual(p["metier"], "generique")
+        p["slug"] = "x"
+        conf = machine.config_maquette(p, CONFIG)
+        self.assertEqual(conf["accroche"], "Achat et vente de produits alimentaires.")
+        self.assertEqual(conf["titre"], "C&S Epicerie, à Saignelégier")
+
+    def test_classement_des_metiers(self):
+        cas = {"Installations sanitaires et chauffage": "plombier", "Travaux de nettoyage et conciergerie": "nettoyage",
+               "Exploitation d'un café-restaurant": "restaurant", "Entretien et création de jardins": "paysagiste",
+               "Salon de coiffure pour hommes (barbier)": "coiffeur"}
+        for texte, attendu in cas.items():
+            self.assertEqual(machine.classer(texte), attendu, texte)
+
+    def test_numeros_suisses(self):
+        import generer_site
+        self.assertEqual(generer_site.lien_tel("076 698 40 59", "41"), "+41766984059")
+        self.assertEqual(generer_site.lien_tel("0041 32 123 45 67", "41"), "+41321234567")
+
+    def test_collecte_suisse_de_bout_en_bout(self):
+        metas = [{"id": "a", "subRubric": "HR01", "language": "fr"}, {"id": "b", "subRubric": "HR02", "language": "fr"},
+                 {"id": "c", "subRubric": "HR01", "language": "de"}]
+        details = {"a": xml_fosc("Salon Léa, Léa Martin", "Exploitation d'un salon de coiffure", forme="0101")}
+        osm = {"elements": [{"type": "node", "id": 1, "tags": {"name": "Salon Léa", "shop": "hairdresser",
+                                                                  "phone": "+41 32 000 00 00", "addr:city": "Saignelégier"}}]}
+        originaux = (sources.fosc_liste, sources.fosc_detail, sources.osm_canton, machine.DONNEES, machine.time.sleep)
+        with tempfile.TemporaryDirectory() as tmp:
+            sources.fosc_liste = lambda *a, **k: metas
+            sources.fosc_detail = lambda i: details[i]
+            sources.osm_canton = lambda *a, **k: osm
+            machine.DONNEES, machine.time.sleep = Path(tmp), lambda s: None
+            try:
+                conf = {**CONFIG, "zone": {**CONFIG["zone"], "cantons": ["JU"]}}
+                trouves = machine.collecter(conf, AUJOURDHUI)
+                self.assertEqual(json.loads((Path(tmp) / "fosc_vus.json").read_text()), ["a"])
+                self.assertEqual(len(machine.collecter(conf, AUJOURDHUI)), 1)
+            finally:
+                sources.fosc_liste, sources.fosc_detail, sources.osm_canton, machine.DONNEES, machine.time.sleep = originaux
+        ps = machine.fusionner([], trouves, AUJOURDHUI.isoformat())
+        self.assertEqual(len(ps), 1)
+        self.assertEqual(ps[0]["telephone"], "+41 32 000 00 00")
 
 
 if __name__ == "__main__":
