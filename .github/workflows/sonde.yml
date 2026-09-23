@@ -10,31 +10,52 @@ jobs:
   sonde:
     runs-on: ubuntu-latest
     steps:
-      - name: FOSC - liste des nouvelles inscriptions (JSON)
+      - name: FOSC - filtres
+        shell: python
         run: |
-          curl -sS -m 60 -H "Accept: application/json" \
-            "https://amtsblattportal.ch/api/v1/publications?publicationStates=PUBLISHED&rubrics=HR&subRubrics=HR01&cantons=JU&pageRequest.page=0&pageRequest.size=2" \
-            -o liste.json -w "HTTP %{http_code}\n" || true
-          head -c 5000 liste.json; echo
-      - name: FOSC - detail XML de la premiere publication
+          import json, urllib.request, urllib.parse
+          B = "https://amtsblattportal.ch/api/v1/publications"
+          def get(params, xml=False):
+              url = B + "?" + urllib.parse.urlencode(params, doseq=True)
+              req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "jour-un-sonde/1.0"})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      return json.loads(r.read())
+              except Exception as e:
+                  return {"erreur": str(e)}
+          base = {"publicationStates": "PUBLISHED", "rubrics": "HR", "cantons": "JU", "pageRequest.size": 50, "pageRequest.page": 0}
+          essais = {
+              "base": {},
+              "subRubrics": {"subRubrics": "HR01"},
+              "subRubric": {"subRubric": "HR01"},
+              "tri": {"pageRequest.sortOrders": "publicationDate,desc"},
+              "dates": {"publicationDate.start": "2026-09-01", "publicationDate.end": "2026-09-23"},
+              "keyword": {"keyword": "Nouvelles inscriptions"},
+          }
+          for nom, extra in essais.items():
+              d = get({**base, **extra})
+              if "erreur" in d:
+                  print(nom, "ERREUR", d["erreur"]); continue
+              metas = [c["meta"] for c in d.get("content", [])]
+              print(nom, "total=", d.get("total"), [(m["subRubric"], m["publicationDate"][:10]) for m in metas[:50]])
+          d = get({**base, "pageRequest.size": 200})
+          hr01 = [c["meta"] for c in d.get("content", []) if c["meta"]["subRubric"] == "HR01"]
+          print("HR01 dans 200 derniers JU:", len(hr01), [(m["publicationDate"][:10], m["title"]["fr"]) for m in hr01[:10]])
+          open("hr01.txt", "w").write(hr01[0]["id"] if hr01 else "")
+          for canton in ["NE", "VD", "GE", "FR", "VS", "BE"]:
+              d = get({**base, "cantons": canton, "pageRequest.size": 200})
+              metas = [c["meta"] for c in d.get("content", [])]
+              h = [m for m in metas if m["subRubric"] == "HR01"]
+              langs = sorted({m["language"] for m in h})
+              dates = sorted({m["publicationDate"][:10] for m in metas})
+              print(canton, "total", d.get("total"), "HR01:", len(h), "langues:", langs, "dates:", dates[:1], dates[-1:])
+      - name: FOSC - detail HR01
         run: |
-          ID=$(python3 -c "import json;d=json.load(open('liste.json'));c=d.get('content') or d.get('items') or d;print((c[0].get('meta') or c[0])['id'])" 2>/dev/null || true)
+          ID=$(cat hr01.txt)
           echo "ID=$ID"
-          if [ -n "$ID" ]; then
-            curl -sS -m 60 "https://amtsblattportal.ch/api/v1/publications/$ID/xml" -o detail.xml -w "HTTP %{http_code}\n" || true
-            head -c 7000 detail.xml; echo
-          fi
-      - name: FOSC - autres formes de parametres
+          [ -n "$ID" ] && curl -sS -m 60 -A "jour-un-sonde/1.0" "https://amtsblattportal.ch/api/v1/publications/$ID/xml" | head -c 5000 || true
+      - name: Overpass avec User-Agent
         run: |
-          for u in \
-            "https://amtsblattportal.ch/api/v1/publications?rubrics=HR&subRubrics=HR01&pageRequest.size=1" \
-            "https://amtsblattportal.ch/api/v1/publications/xml?rubrics=HR&subRubrics=HR01&cantons=JU&pageRequest.size=1" \
-            "https://amtsblattportal.ch/api/v1/api-docs" \
-            "https://amtsblattportal.ch/api/v1/v3/api-docs" ; do
-            echo "== $u"; curl -sS -m 60 "$u" -w "\nHTTP %{http_code}\n" | head -c 1500; echo
-          done
-      - name: Overpass - canton du Jura
-        run: |
-          curl -sS -m 120 https://overpass-api.de/api/interpreter \
-            --data-urlencode 'data=[out:json][timeout:60];area["ISO3166-2"="CH-JU"]->.a;(nwr["shop"="hairdresser"](area.a););out center tags 3;' \
-            -w "\nHTTP %{http_code}\n" | head -c 2500
+          curl -sS -m 120 -A "jour-un-sonde/1.0 (github.com/ardaaris14-del/mon-premier-projet)" https://overpass-api.de/api/interpreter \
+            --data-urlencode 'data=[out:json][timeout:60];area["ISO3166-2"="CH-JU"]->.a;(nwr["shop"="hairdresser"](area.a););out center tags 2;' \
+            -w "\nHTTP %{http_code}\n" | head -c 2000
