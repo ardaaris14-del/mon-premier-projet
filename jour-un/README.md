@@ -44,7 +44,7 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
    Name : `SUPABASE_SECRET`, Secret : la clé copiée. Ne la donne à personne.
 3. **Créer ton mot de passe de secours** : même endroit, Name : `COCKPIT_MOT_DE_PASSE`, Secret : un mot de passe long.
    Il protège le cockpit de secours et rend les liens des kits impossibles à deviner.
-4. **Créer ton compte dans l'appli** : ouvre `https://jour-un-three.vercel.app`, tape ton email
+4. **Créer ton compte dans l'appli** : ouvre `https://web-design-ch.vercel.app`, tape ton email
    (ardaaris14@gmail.com) et un mot de passe d'au moins 8 caractères, puis **« Première fois ? Créer mon compte »**.
    Seul ton email est autorisé : personne d'autre ne peut créer de compte.
 5. **Lancer la machine** : dans l'appli, onglet *Machine → Lancer maintenant* (elle démarre dans les 15 minutes).
@@ -52,7 +52,7 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
 
 ## Ton appli web-design.ch (téléphone et ordinateur)
 
-`https://jour-un-three.vercel.app` : connecte-toi, puis installe-la comme une appli
+`https://web-design-ch.vercel.app` : connecte-toi, puis installe-la comme une appli
 (iPhone : Partager → « Sur l'écran d'accueil » ; Android : menu ⋮ → « Installer l'application »).
 
 | Onglet | Ce que tu y fais |
