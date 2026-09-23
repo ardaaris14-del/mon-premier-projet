@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+$meta_robots
+<title>$nom — $metier à $ville</title>
+<meta name="description" content="$nom, $metier à $ville et alentours. $accroche Appelez le $telephone.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script type="application/ld+json">$jsonld</script>
+<style>
+:root{--c:$couleur;--ink:#14161a;--muted:#5b616e;--bg:#ffffff;--soft:#f4f5f7;--line:#e4e6ea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.maquette{background:#111;color:#fff;text-align:center;font-size:14px;padding:8px 16px}
+header{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:10}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px}
+.logo{font-weight:800;font-size:18px;text-decoration:none}
+.logo span{color:var(--c)}
+nav a{margin-left:20px;text-decoration:none;color:var(--muted);font-size:15px}
+.btn{display:inline-block;background:var(--c);color:#fff;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:10px;border:0}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.hero{padding:80px 0 64px;background:linear-gradient(180deg,var(--soft),#fff)}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.1;font-weight:800;max-width:760px}
+.hero p{font-size:19px;color:var(--muted);margin:18px 0 28px;max-width:640px}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.badges{display:flex;gap:20px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:15px}
+.badges b{color:var(--ink)}
+section{padding:64px 0}
+h2{font-size:30px;font-weight:800;margin-bottom:8px}
+.lead{color:var(--muted);margin-bottom:32px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:22px;background:#fff}
+.card h3{font-size:18px;margin-bottom:6px}
+.card p{color:var(--muted);font-size:15px}
+.alt{background:var(--soft)}
+.avis .etoiles{color:#f5a623;letter-spacing:2px}
+.avis .auteur{margin-top:10px;font-weight:600;font-size:14px}
+.infos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+table{width:100%;border-collapse:collapse}
+td{padding:8px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;color:var(--muted)}
+iframe{width:100%;height:300px;border:0;border-radius:14px}
+.contact{background:var(--ink);color:#fff}
+.contact .lead{color:#b9bec8}
+.contact .btn.ghost{color:#fff;border-color:#3a3f4a}
+footer{padding:28px 0;font-size:13px;color:var(--muted)}
+details{margin-top:8px}
+.appel{position:fixed;right:16px;bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:none}
+@media(max-width:720px){nav,header .btn{display:none}.appel{display:inline-block}section{padding:48px 0}.hero{padding:56px 0 44px}}
+</style>
+</head>
+<body>
+$bandeau_maquette
+<header><div class="wrap">
+  <a class="logo" href="#">$nom_logo</a>
+  <nav><a href="#services">Services</a><a href="#avis">Avis</a><a href="#infos">Horaires</a><a href="#contact">Contact</a></nav>
+  <a class="btn" href="tel:$telephone_lien">$telephone</a>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>$titre</h1>
+  <p>$accroche</p>
+  <div class="ctas">
+    <a class="btn" href="tel:$telephone_lien">Appeler maintenant</a>
+    <a class="btn ghost" href="#contact">Demander un devis gratuit</a>
+  </div>
+  <div class="badges">$badges</div>
+</div></section>
+
+<section id="services"><div class="wrap">
+  <h2>Nos services</h2>
+  <p class="lead">$metier à $ville et dans un rayon de $rayon.</p>
+  <div class="grid">$services</div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>À propos</h2>
+  <p class="lead" style="max-width:760px;margin-bottom:0">$apropos</p>
+</div></section>
+
+$section_avis
+
+<section id="infos"><div class="wrap infos">
+  <div>
+    <h2>Horaires</h2>
+    <table>$horaires</table>
+    <p style="margin-top:16px;color:var(--muted)">$adresse</p>
+  </div>
+  <div><iframe loading="lazy" title="Carte" src="https://www.google.com/maps?q=$carte_q&output=embed"></iframe></div>
+</div></section>
+
+<section id="contact" class="contact"><div class="wrap">
+  <h2>Un projet, une urgence ?</h2>
+  <p class="lead">Réponse rapide, devis gratuit et sans engagement.</p>
+  <div class="ctas" style="display:flex;gap:12px;flex-wrap:wrap">
+    <a class="btn" href="tel:$telephone_lien">Appeler le $telephone</a>
+    $bouton_whatsapp
+    <a class="btn ghost" href="mailto:$email?subject=Demande%20de%20devis">$email</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  © $annee $nom · $adresse
+  <details><summary>Mentions légales</summary>
+    <p>Éditeur : $raison_sociale — N° d'entreprise : $siret — $adresse — $telephone.<br>
+    Directeur de la publication : $responsable.<br>
+    Hébergement : $hebergeur.<br>
+    Site réalisé par $realise_par.</p>
+  </details>
+</div></footer>
+
+<a class="btn appel" href="tel:$telephone_lien">Appeler</a>
+</body>
+</html>

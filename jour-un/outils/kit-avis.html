@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kit avis Google</title>
+<script src="qrcode.js"></script>
+<style>
+:root{--c:#0b63ce;--ink:#14161a;--muted:#5b616e;--line:#e4e6ea;--soft:#f4f5f7}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--soft);margin:0;line-height:1.5}
+.page{max-width:900px;margin:0 auto;padding:24px 16px}
+.bloc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:20px}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+input{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+button{background:var(--c);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
+.affiche{width:148mm;min-height:210mm;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14mm;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:8mm}
+.affiche h1{font-size:30px;margin:0;line-height:1.15}
+.affiche .etoiles{font-size:38px;color:#f5a623;letter-spacing:6px}
+.affiche .qr svg{width:70mm;height:70mm}
+.affiche p{margin:0;color:var(--muted);font-size:17px}
+textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit}
+@media print{body{background:#fff}.no-print{display:none}.page{padding:0}.affiche{border:0}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bloc no-print">
+    <h1 style="margin-top:0">Kit avis Google</h1>
+    <p style="color:var(--muted)">Lien d'avis : dans la fiche Google Business du client → « Demander des avis » → copier le lien (format g.page/r/...).
+      Règle Google : on demande un avis à <b>tous</b> les clients, jamais seulement aux clients satisfaits, et on n'offre jamais de contrepartie.</p>
+    <label>Nom de l'entreprise</label><input id="nom" value="Plomberie Martin">
+    <label>Lien d'avis Google</label><input id="lien" placeholder="https://g.page/r/...">
+    <button onclick="maj()">Générer</button> <button onclick="window.print()">Imprimer l'affiche</button>
+  </div>
+
+  <div class="affiche">
+    <div class="etoiles">★★★★★</div>
+    <h1>Votre avis compte pour <span id="a-nom"></span></h1>
+    <div class="qr" id="qr"></div>
+    <p>Scannez avec l'appareil photo de votre téléphone.<br>30 secondes, et ça nous aide énormément. Merci !</p>
+  </div>
+
+  <div class="bloc no-print" style="margin-top:20px">
+    <h2 style="margin-top:0">Messages à envoyer aux clients</h2>
+    <label>SMS (après la prestation)</label><textarea id="sms"></textarea>
+    <label>Email</label><textarea id="mail" style="min-height:160px"></textarea>
+    <label>Relance (7 jours après, une seule fois)</label><textarea id="relance"></textarea>
+  </div>
+</div>
+<script>
+function maj() {
+  const nom = document.getElementById('nom').value.trim() || 'nous';
+  const lien = document.getElementById('lien').value.trim() || 'https://g.page/r/VOTRE-LIEN';
+  document.getElementById('a-nom').textContent = nom;
+  const qr = qrcode(0, 'M');
+  qr.addData(lien);
+  qr.make();
+  document.getElementById('qr').innerHTML = qr.createSvgTag({cellSize: 8, margin: 2, scalable: true});
+  document.getElementById('sms').value =
+    `Bonjour, merci de votre confiance ! Si vous avez 30 secondes, votre avis sur Google nous aiderait beaucoup : ${lien} — ${nom}`;
+  document.getElementById('mail').value =
+    `Objet : Merci pour votre confiance\n\nBonjour,\n\nMerci d'avoir fait appel à ${nom}. Nous sommes une petite entreprise locale et les avis de nos clients sont ce qui nous fait connaître.\n\nSi vous avez 30 secondes, pourriez-vous partager votre expérience sur Google ?\n${lien}\n\nMerci beaucoup,\n${nom}`;
+  document.getElementById('relance').value =
+    `Bonjour, petit rappel sans insister : si vous avez un moment pour laisser un avis sur ${nom}, c'est ici : ${lien}. Merci et bonne journée !`;
+}
+maj();
+</script>
+</body>
+</html>

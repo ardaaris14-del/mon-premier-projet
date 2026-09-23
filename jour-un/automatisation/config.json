@@ -1,0 +1,31 @@
+{
+ "pays": "CH",
+ "moi": {
+  "agence": "Jour Un",
+  "nom": "Arda Aris",
+  "telephone": "076 698 40 59",
+  "email": "ardaaris14@gmail.com",
+  "ville": "Les Breuleux",
+  "siret": ""
+ },
+ "offre": {
+  "prix_kit": 290,
+  "prix_mois": 39,
+  "devise": "CHF",
+  "lien_paiement": ""
+ },
+ "zone": {
+  "cantons": ["JU", "NE", "VD", "GE", "FR", "VS"],
+  "langues": ["fr"],
+  "metiers": "tous"
+ },
+ "age_max_jours": 45,
+ "fosc_max_details": 1500,
+ "kits_max": 400,
+ "messages": {
+  "sms": "Bonjour, c'est {moi} de Jour Un, comme convenu au téléphone. Voici le kit de lancement que j'ai préparé pour {nom} : site internet, logo, carte de visite et fiche Google, déjà à votre nom. {lien} Bonne journée ! {tel}",
+  "email_objet": "{nom} : votre kit de lancement, comme convenu",
+  "email": "Bonjour,\n\nMerci pour notre échange au téléphone, et encore félicitations pour la création de {nom} !\n\nComme convenu, voici le kit de lancement que j'ai préparé pour vous : un site internet, trois propositions de logo, une carte de visite et le texte de votre fiche Google, déjà à votre nom.\n\nTout est ici : {lien}\n\nS'il vous plaît, il est à vous. Sinon, aucun souci.\n\nBelle journée,\n{moi}\n{tel}\n\nPour ne plus recevoir de message de ma part, répondez simplement « stop »."
+ },
+ "exclus": []
+}

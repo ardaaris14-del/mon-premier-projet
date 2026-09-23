@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour Un — le kit de lancement des nouvelles entreprises</title>
+<meta name="description" content="Votre entreprise vient de naître ? Site internet, logo, carte de visite et fiche Google : votre kit de lancement est déjà prêt, à votre nom.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--c:#e8590c;--ink:#14161a;--muted:#5b616e;--soft:#fbf7f3;--line:#ece4dc}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:68px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}.logo span{color:var(--c)}
+.btn{display:inline-block;background:var(--c);color:#fff;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:10px}
+header .btn{padding:10px 16px;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.hero{padding:72px 0 64px;background:linear-gradient(180deg,var(--soft),#fff)}
+.hero .sur{color:var(--c);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:13px}
+.hero h1{font-size:clamp(34px,5.4vw,58px);line-height:1.05;font-weight:800;max-width:820px;margin:10px 0 0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--c)}
+.hero p{font-size:19px;color:var(--muted);max-width:640px;margin:20px 0 28px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+section{padding:64px 0}
+h2{font-size:32px;font-weight:800;margin-bottom:10px;letter-spacing:-.01em}
+.lead{color:var(--muted);margin-bottom:32px;max-width:680px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:22px;background:#fff}
+.card b{display:block;margin-bottom:6px;font-size:17px}
+.card p{color:var(--muted);font-size:15px}
+.num{width:36px;height:36px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:800;margin-bottom:12px}
+.alt{background:var(--soft)}
+.prix{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:760px}
+.offre{border:2px solid var(--line);border-radius:18px;padding:28px;background:#fff}
+.offre.main{border-color:var(--c)}
+.offre .montant{font-size:44px;font-weight:800}.offre .montant small{font-size:17px;color:var(--muted);font-weight:600}
+.offre ul{list-style:none;margin:16px 0 0}
+.offre li{padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.offre li::before{content:"✔ ";color:var(--c);font-weight:800}
+details{border-bottom:1px solid var(--line);padding:16px 0}
+summary{font-weight:600;cursor:pointer}
+details p{color:var(--muted);margin-top:8px}
+.partenaires{background:var(--ink);color:#fff}
+.partenaires .lead{color:#c4c8d0}
+.partenaires .card{background:#1d2026;border-color:#2c3038}
+.partenaires .card p{color:#c4c8d0}
+.contact{text-align:center}
+.contact .lead{margin:0 auto 28px}
+.contact .ctas{justify-content:center}
+footer{padding:24px 0;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<!-- ======= À MODIFIER : tes coordonnées (remplacées automatiquement par la machine) ======= -->
+<script>
+const MOI = {
+  nom: "Prénom Nom",
+  telephone: "06 00 00 00 00",
+  email: "contact@exemple.fr",
+  ville: "ta ville",
+  siret: "",
+  prix_kit: 149,
+  prix_mois: 29,
+  devise: "€",
+};
+</script>
+<!-- ======================================================================================= -->
+
+<header><div class="wrap">
+  <div class="logo">Jour <span>Un</span></div>
+  <a class="btn" data-tel href="#">Appeler</a>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <div class="sur">Pour les entreprises qui viennent de naître</div>
+  <h1>Votre entreprise est née hier.<br><em>Son site est déjà prêt.</em></h1>
+  <p>Chaque semaine, nous préparons le kit de lancement complet des nouvelles entreprises : site internet, logo, carte de visite et fiche Google, déjà à leur nom. Vous le regardez. S'il vous plaît, il est à vous.</p>
+  <div class="ctas">
+    <a class="btn" href="#contact">Recevoir mon kit</a>
+    <a class="btn ghost" href="#prix">Voir le prix</a>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Dans votre kit</h2>
+  <p class="lead">Tout ce qu'il faut pour que vos premiers clients vous trouvent, sans y passer vos soirées.</p>
+  <div class="grid">
+    <div class="card"><b>Un site internet</b><p>Adapté aux téléphones, avec vos services, vos horaires, une carte et un bouton pour vous appeler.</p></div>
+    <div class="card"><b>Trois logos</b><p>Trois propositions à vos couleurs, livrées en fichiers haute définition.</p></div>
+    <div class="card"><b>Une carte de visite</b><p>Prête à envoyer chez l'imprimeur.</p></div>
+    <div class="card"><b>Votre fiche Google</b><p>Description, catégories et premières publications rédigées, pour apparaître sur Google Maps dès le premier mois.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>Comment ça marche</h2>
+  <p class="lead">Pas de rendez-vous, pas de cahier des charges, pas d'attente.</p>
+  <div class="grid">
+    <div class="card"><div class="num">1</div><b>Votre kit est déjà fait</b><p>Nous le préparons avant même de vous contacter. Vous voyez le résultat avant de décider.</p></div>
+    <div class="card"><div class="num">2</div><b>Vous dites oui</b><p>On ajuste ensemble les textes, les photos et le logo que vous préférez.</p></div>
+    <div class="card"><div class="num">3</div><b>En ligne en 48 h</b><p>Site sur votre nom de domaine, fiche Google créée avec vous. Vous êtes visible.</p></div>
+  </div>
+</div></section>
+
+<section id="prix"><div class="wrap">
+  <h2>Prix</h2>
+  <p class="lead">Un prix unique, et une option si vous voulez qu'on s'occupe de tout.</p>
+  <div class="prix">
+    <div class="offre main">
+      <b>Kit de lancement</b>
+      <div class="montant"><span data-prix-kit></span> <small>une fois</small></div>
+      <ul><li>Site en ligne + nom de domaine 1 an</li><li>Logo en fichiers HD</li><li>Carte de visite prête à imprimer</li><li>Fiche Google créée avec vous</li></ul>
+    </div>
+    <div class="offre">
+      <b>Suivi (option)</b>
+      <div class="montant"><span data-prix-mois></span> <small>/ mois</small></div>
+      <ul><li>Hébergement et modifications</li><li>4 publications Google par mois</li><li>Réponse à vos avis</li><li>Sans engagement</li></ul>
+    </div>
+  </div>
+</div></section>
+
+<section class="partenaires"><div class="wrap">
+  <h2>Fiduciaires, notaires, banques : offrez-le</h2>
+  <p class="lead">Vos nouveaux clients créent leur entreprise avec vous. Offrez-leur leur kit de lancement : c'est un cadeau de bienvenue qui marque les esprits, et vous touchez une commission sur chaque kit activé.</p>
+  <div class="grid">
+    <div class="card"><b>Zéro travail</b><p>Vous nous transmettez le nom de l'entreprise, nous préparons le kit.</p></div>
+    <div class="card"><b>Un vrai cadeau</b><p>Votre client reçoit un site, un logo et une fiche Google à son nom.</p></div>
+    <div class="card"><b>Rémunéré</b><p>Commission sur chaque kit activé par vos clients.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap" style="max-width:760px">
+  <h2>Questions fréquentes</h2>
+  <details><summary>Comment avez-vous eu mes informations ?</summary><p>Le nom, l'adresse et l'activité des nouvelles entreprises sont publics : ils sont publiés officiellement par le registre du commerce. Nous ne les utilisons que pour préparer votre kit, et un simple « stop » suffit pour qu'il soit supprimé.</p></details>
+  <details><summary>Je ne suis pas obligé d'acheter ?</summary><p>Non. Le kit a été préparé à nos frais. S'il ne vous plaît pas, vous ne payez rien.</p></details>
+  <details><summary>Le site m'appartient ?</summary><p>Oui. Le nom de domaine est à votre nom et vous pouvez récupérer les fichiers à tout moment.</p></details>
+  <details><summary>Et si je veux changer des choses ?</summary><p>Textes, couleurs, photos, logo : on ajuste ensemble avant la mise en ligne. C'est compris dans le prix.</p></details>
+</div></section>
+
+<section id="contact" class="contact"><div class="wrap">
+  <h2>Votre entreprise vient de naître ?</h2>
+  <p class="lead">Envoyez-nous son nom. Si son kit n'est pas encore prêt, nous le préparons sous 24 h, gratuitement.</p>
+  <div class="ctas">
+    <a class="btn" data-tel data-tel-num href="#">Appeler</a>
+    <a class="btn ghost" data-mail href="#">Écrire un email</a>
+  </div>
+</div></section>
+
+<footer><span data-nom></span> · Jour Un · Entreprise individuelle<span data-siret-bloc> · N° <span data-siret></span></span> · <span data-email></span></footer>
+
+<script>
+const telLien = "tel:" + MOI.telephone.replace(/\s/g, "");
+document.querySelectorAll("[data-tel]").forEach(a => { a.href = telLien; });
+document.querySelectorAll("[data-tel-num]").forEach(a => { a.textContent = "Appeler le " + MOI.telephone; });
+document.querySelectorAll("[data-mail]").forEach(a => { a.href = "mailto:" + MOI.email + "?subject=" + encodeURIComponent("Mon kit de lancement"); });
+document.querySelectorAll("[data-nom]").forEach(e => e.textContent = MOI.nom);
+document.querySelectorAll("[data-siret]").forEach(e => e.textContent = MOI.siret);
+document.querySelectorAll("[data-siret-bloc]").forEach(e => { e.hidden = !MOI.siret; });
+document.querySelectorAll("[data-prix-kit]").forEach(e => e.textContent = MOI.prix_kit + " " + MOI.devise);
+document.querySelectorAll("[data-prix-mois]").forEach(e => e.textContent = MOI.prix_mois + " " + MOI.devise);
+document.querySelectorAll("[data-email]").forEach(e => e.textContent = MOI.email);
+</script>
+</body>
+</html>
