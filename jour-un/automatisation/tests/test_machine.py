@@ -5,6 +5,7 @@ import re
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from xml.sax.saxutils import escape
 from datetime import date
 from pathlib import Path
@@ -102,7 +103,7 @@ class Machine(unittest.TestCase):
     def test_construction_du_site(self):
         with tempfile.TemporaryDirectory() as tmp:
             sortie = Path(tmp) / "_site"
-            n = machine.construire_site(CONFIG, self.prospects(), sortie, AUJOURDHUI)
+            n = len(machine.construire_site(CONFIG, self.prospects(), sortie, AUJOURDHUI))
             self.assertEqual(n, 2)
             pages = list(sortie.glob("k/*/index.html")) + list(sortie.glob("m/*/index.html"))
             self.assertEqual(len(pages), 4)
@@ -220,6 +221,101 @@ class Suisse(unittest.TestCase):
         ps = machine.fusionner([], trouves, AUJOURDHUI.isoformat())
         self.assertEqual(len(ps), 1)
         self.assertEqual(ps[0]["telephone"], "+41 32 000 00 00")
+
+
+class FausseBase:
+    def __init__(self, tables):
+        self.t = {k: [dict(x) for x in v] for k, v in tables.items()}
+
+    def _filtre(self, table, filtres):
+        lignes = self.t.setdefault(table, [])
+        for col, cond in filtres.items():
+            if col in ("select", "order", "limit"):
+                continue
+            if cond == "is.null":
+                lignes = [x for x in lignes if x.get(col) is None]
+            elif cond.startswith("eq."):
+                lignes = [x for x in lignes if str(x.get(col)) == cond[3:]]
+        return lignes
+
+    def lire(self, table, **params):
+        return [dict(x) for x in self._filtre(table, params)]
+
+    def inserer(self, table, ligne):
+        ligne = {"id": len(self.t.setdefault(table, [])) + 1, **ligne}
+        self.t[table].append(ligne)
+        return ligne
+
+    def upsert(self, table, lignes, conflit):
+        cles = conflit.split(",")
+        for l in lignes:
+            existant = next((x for x in self.t.setdefault(table, []) if all(x.get(k) == l[k] for k in cles)), None)
+            if existant:
+                existant.update(l)
+            else:
+                self.t[table].append(dict(l))
+
+    def modifier(self, table, valeurs, **filtres):
+        for x in self._filtre(table, filtres):
+            x.update(valeurs)
+
+    def supprimer_ids(self, table, ids, colonne="id"):
+        ids = set(ids)
+        self.t[table] = [x for x in self.t.get(table, []) if x[colonne] not in ids]
+
+
+class Supabase(unittest.TestCase):
+    def test_entetes_selon_le_type_de_cle(self):
+        import base
+        self.assertNotIn("Authorization", base.Base("https://x.supabase.co", "sb_secret_abc").entetes)
+        self.assertEqual(base.Base("https://x.supabase.co", "eyJ.jwt").entetes["Authorization"], "Bearer eyJ.jwt")
+
+    def test_execution_complete_avec_la_base(self):
+        import argparse
+        prospects = Machine().prospects()
+        ancien = {**{k: v for k, v in prospects[0].items() if k != "slug"}, "id": "c-999", "nom": "Vieux Client", "date_creation": "2025-01-01"}
+        stoppe = next(p for p in prospects if p["id"] == "s-987654321")
+        fausse = FausseBase({
+            "reglages": [{"id": 1, "data": {**CONFIG, "pays": "FR"}, "meta": {}}],
+            "suivi": [{"prospect_id": "c-999", "statut": "Intéressé", "stop": False},
+                      {"prospect_id": stoppe["id"], "statut": "Pas intéressé", "stop": True}],
+            "clients": [{"id": "u1", "nom": "Garage Test", "metier": "garage", "ville": "Delémont"}],
+            "prospects": [{"id": "obsolete"}],
+            "demandes": [{"id": 1, "traitee_le": None}],
+        })
+        originaux = (machine.DONNEES,)
+        with tempfile.TemporaryDirectory() as tmp:
+            machine.DONNEES = Path(tmp)
+            (Path(tmp) / "prospects.json").write_text(json.dumps(prospects + [ancien]), encoding="utf-8")
+            try:
+                args = argparse.Namespace(hors_ligne=True, sortie=str(Path(tmp) / "_site"), exiger_chiffrement=False)
+                with unittest.mock.patch.dict("os.environ", {"GITHUB_REPOSITORY": "Moi/projet"}):
+                    stats = machine.executer(args, AUJOURDHUI, fausse)
+            finally:
+                (machine.DONNEES,) = originaux
+        ids = {p["id"] for p in fausse.t["prospects"]}
+        self.assertIn("c-999", ids, "un prospect suivi garde son kit même ancien")
+        self.assertNotIn(stoppe["id"], ids, "un stop disparaît")
+        self.assertNotIn("obsolete", ids)
+        self.assertEqual(stats["kits"], len(ids))
+        vieux = next(p for p in fausse.t["prospects"] if p["id"] == "c-999")
+        self.assertTrue(vieux["kit_url"].startswith("https://moi.github.io/projet/k/"))
+        self.assertEqual(fausse.t["publications"][0]["client_id"], "u1")
+        self.assertIsNotNone(fausse.t["demandes"][0]["traitee_le"])
+        self.assertIn("coiffeur", fausse.t["reglages"][0]["meta"]["metiers"])
+
+
+class Decision(unittest.TestCase):
+    def test_decision(self):
+        import decision
+        base = FausseBase({"demandes": [{"id": 1, "traitee_le": None}]})
+        vide = FausseBase({"demandes": [{"id": 1, "traitee_le": "2026-09-23"}]})
+        self.assertTrue(decision.faut_il_lancer("workflow_dispatch", "", None))
+        self.assertTrue(decision.faut_il_lancer("push", "", None))
+        self.assertTrue(decision.faut_il_lancer("schedule", "0 5 * * *", None))
+        self.assertTrue(decision.faut_il_lancer("schedule", "*/15 * * * *", base))
+        self.assertFalse(decision.faut_il_lancer("schedule", "*/15 * * * *", vide))
+        self.assertFalse(decision.faut_il_lancer("schedule", "*/15 * * * *", None))
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ name: Machine Jour Un
 on:
   schedule:
     - cron: "0 5 * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
   push:
     branches: [main]
@@ -10,16 +11,38 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-concurrency:
-  group: machine-jour-un
-  cancel-in-progress: false
+env:
+  SUPABASE_URL: https://pnngtkpweyjohbjkremi.supabase.co
 
 jobs:
-  machine:
+  decision:
     runs-on: ubuntu-latest
+    outputs:
+      lancer: ${{ steps.decision.outputs.lancer }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: jour-un/automatisation
+      - id: decision
+        name: Faut-il lancer la machine ?
+        env:
+          SUPABASE_SECRET: ${{ secrets.SUPABASE_SECRET }}
+          EVENEMENT_CRON: ${{ github.event.schedule }}
+        run: python3 jour-un/automatisation/decision.py
+
+  machine:
+    needs: decision
+    if: needs.decision.outputs.lancer == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      actions: write
+    concurrency:
+      group: machine-jour-un
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
@@ -41,6 +64,7 @@ jobs:
         env:
           INSEE_API_KEY: ${{ secrets.INSEE_API_KEY }}
           COCKPIT_MOT_DE_PASSE: ${{ secrets.COCKPIT_MOT_DE_PASSE }}
+          SUPABASE_SECRET: ${{ secrets.SUPABASE_SECRET }}
         run: python jour-un/automatisation/machine.py --exiger-chiffrement --sortie _site
 
       - name: Sauvegarder la mémoire de la machine
@@ -55,3 +79,10 @@ jobs:
           path: _site
       - id: deploiement
         uses: actions/deploy-pages@v4
+
+      - name: Garder les lancements automatiques actifs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -sS -X PUT -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/machine.yml/enable" || true

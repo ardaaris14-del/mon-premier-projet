@@ -1,3 +1,4 @@
 __pycache__/
 _site/
 jour-un/automatisation/donnees/
+.claude/settings.local.json
