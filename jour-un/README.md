@@ -32,44 +32,48 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
    reconnus. Les autres entreprises reçoivent un kit générique, construit à partir de leur propre activité.
 4. **Fabrique le kit** : site adapté aux téléphones, 3 logos, carte de visite, texte de fiche Google, 4 premières publications.
 5. **Met tout en ligne** gratuitement sur GitHub Pages. Les liens sont impossibles à deviner et invisibles sur Google.
-6. **Met à jour ton cockpit** (protégé par mot de passe) : pour chaque entreprise, son activité et des boutons
+6. **Remplit ton appli Jour Un** (base Supabase) : pour chaque entreprise, son activité et des boutons
    *Voir son kit*, *Annuaire*, *Google*, *Appeler*, *SMS* et *WhatsApp*, avec le message déjà rempli.
-7. **Rédige les 4 publications du mois** de chacun de tes clients abonnés (section « Mes clients » du cockpit).
+7. **Rédige les 4 publications du mois** de chacun de tes clients abonnés (onglet « Clients » de l'appli).
 
 ## Mise en route (15 minutes, 0 CHF)
 
-1. **Activer le site** : sur GitHub, *Settings → Pages → Build and deployment → Source : **GitHub Actions***.
-2. **Créer ton mot de passe du cockpit** : *Settings → Secrets and variables → Actions → New repository secret*.
-   Name : `COCKPIT_MOT_DE_PASSE`, Secret : un mot de passe long, que toi seul connais.
-3. **Lancer la machine** : onglet *Actions → Machine Jour Un → Run workflow*. Au premier lancement, elle lit les
-   45 derniers jours, ce qui peut prendre 10 à 20 minutes. Ensuite :
-   - ta page publique : `https://ardaaris14-del.github.io/mon-premier-projet/`
-   - ton cockpit : `https://ardaaris14-del.github.io/mon-premier-projet/cockpit/`
+1. **Activer le site des kits** : sur GitHub, *Settings → Pages → Build and deployment → Source : **GitHub Actions***.
+2. **Relier la machine à ta base** : dans Supabase, projet **jour-un** → *Project Settings → API Keys* → copie la
+   **secret key**. Puis sur GitHub : *Settings → Secrets and variables → Actions → New repository secret*,
+   Name : `SUPABASE_SECRET`, Secret : la clé copiée. Ne la donne à personne.
+3. **Créer ton mot de passe de secours** : même endroit, Name : `COCKPIT_MOT_DE_PASSE`, Secret : un mot de passe long.
+   Il protège le cockpit de secours et rend les liens des kits impossibles à deviner.
+4. **Créer ton compte dans l'appli** : ouvre `https://jour-un-three.vercel.app`, tape ton email
+   (ardaaris14@gmail.com) et un mot de passe d'au moins 8 caractères, puis **« Première fois ? Créer mon compte »**.
+   Seul ton email est autorisé : personne d'autre ne peut créer de compte.
+5. **Lancer la machine** : dans l'appli, onglet *Machine → Lancer maintenant* (elle démarre dans les 15 minutes).
+   Au premier lancement, elle lit les 45 derniers jours, ce qui peut prendre 10 à 20 minutes.
 
-## Ton panel admin (téléphone et ordinateur)
+## Ton appli Jour Un (téléphone et ordinateur)
 
-`https://ardaaris14-del.github.io/mon-premier-projet/cockpit/` : ouvre-le avec ton mot de passe, puis installe-le comme une appli
-(iPhone : Partager → « Sur l'écran d'accueil » ; Android : menu ⋮ → « Ajouter à l'écran d'accueil »).
+`https://jour-un-three.vercel.app` : connecte-toi, puis installe-la comme une appli
+(iPhone : Partager → « Sur l'écran d'accueil » ; Android : menu ⋮ → « Installer l'application »).
 
 | Onglet | Ce que tu y fais |
 |---|---|
 | **Prospects** | Les nouvelles entreprises et leur kit : Annuaire, Appeler, SMS après accord, statut, bouton **Stop** (retire définitivement l'entreprise et supprime son kit) |
 | **Clients** | Ajouter ou retirer un client abonné, copier ses 4 publications du mois |
-| **Réglages** | Tes coordonnées, tes prix, ton lien de paiement, tes cantons, tes métiers, tes messages, les exclusions |
+| **Réglages** | Tes coordonnées, tes prix, ton lien de paiement, tes cantons, tes métiers, tes messages, les exclusions, ton mot de passe |
 | **Machine** | Voir les derniers passages du robot, le relancer d'un bouton |
 
-Les onglets Clients, Réglages et Machine modifient ton projet GitHub. La première fois, sur chaque appareil, le panel
-te demande une **clé d'accès GitHub** et t'explique comment la créer : clé « fine-grained » limitée à ce projet, avec les droits
-*Contents* et *Actions* en « Read and write ». La clé reste enregistrée uniquement sur ton appareil. Chaque modification de
-réglages relance automatiquement la machine.
+Tout est enregistré dans ta base Supabase (projet **jour-un**, hébergé à Zurich). La machine tourne gratuitement sur
+GitHub chaque matin, lit tes réglages dans la base et y dépose les nouveaux prospects. Chaque modification de réglages
+la relance automatiquement dans les 15 minutes.
 
-Tes réglages sont stockés dans `automatisation/config.json` : tu peux aussi les modifier directement là.
+Le cockpit de secours reste disponible sur `https://ardaaris14-del.github.io/mon-premier-projet/cockpit/` (même mot de
+passe que `COCKPIT_MOT_DE_PASSE`), au cas où l'appli serait indisponible.
 
 ## La règle d'or en Suisse : appeler d'abord
 
 La loi contre la concurrence déloyale (LCD) encadre la prospection :
 - **SMS, WhatsApp, email publicitaires sans accord préalable : interdits** (art. 3 al. 1 let. o LCD). C'est pour ça que les
-  boutons du cockpit disent « après accord ».
+  boutons de l'appli disent « après accord ».
 - **Appeler un numéro marqué d'un astérisque (\*) dans l'annuaire : interdit** (art. 3 al. 1 let. u LCD). Vérifie avec le bouton *Annuaire* avant d'appeler.
 - **Appeler un numéro sans astérisque et passer en personne : autorisé.**
 
@@ -78,7 +82,7 @@ Bonus : un créateur qui a dit oui au téléphone ouvre le lien beaucoup plus so
 
 ## Ta journée (environ 1 h 30)
 
-1. Ouvre le cockpit sur ton téléphone et filtre sur **« Arrivés cette semaine »**.
+1. Ouvre l'appli sur ton téléphone et filtre sur **« Arrivés cette semaine »**.
 2. Pour chaque entreprise : bouton **Annuaire** (search.ch), sinon **Google**, pour trouver son numéro (1 minute).
 3. **Appelle** (script dans `documents/prospection.md`). S'il est d'accord, envoie le kit par SMS en un clic.
 4. **Relance à J+3** (« Vous avez pu regarder votre kit ? »), puis une dernière fois à J+10. Jamais plus.
@@ -152,13 +156,14 @@ cantonales et aux structures d'aide à la création (Créapole dans le Jura, par
 
 | Chemin | Rôle |
 |---|---|
-| `automatisation/config.json` | **Tes réglages** : coordonnées, prix, cantons, métiers (`"tous"` ou une liste), messages, exclusions |
+| `automatisation/config.json` | Réglages de départ, copiés dans la base au premier lancement. Ensuite, modifie-les dans l'appli (onglet Réglages). |
 | `automatisation/machine.py` | La machine : prospection, kits, cockpit, publications des clients |
 | `automatisation/sources.py` | Les sources : FOSC (Suisse), OpenStreetMap, et SIRENE/INSEE si tu passes `"pays"` à `"FR"` |
 | `automatisation/metiers.py` | Contenu et mots-clés de chaque métier. Pour en ajouter un, copie un bloc. |
-| `automatisation/clients.json` | Tes clients abonnés, pour leurs publications du mois (ex. : `[{"nom": "Franches Tables", "metier": "restaurant", "ville": "Saignelégier", "telephone": "032…"}]`) |
 | `automatisation/kit.py`, `kit.html` | Le kit de lancement (logos, carte de visite, fiche Google, publications) |
-| `automatisation/cockpit.html` | Ton cockpit |
+| `automatisation/base.py`, `decision.py` | Lien avec la base Supabase, et décision de lancer la machine (matin ou demande depuis l'appli) |
+| `automatisation/cockpit.html` | Le cockpit de secours |
+| `webapp/` | Ton appli Jour Un, en ligne sur Vercel |
 | `generateur/` | Le générateur de site (utilisé par la machine, ou à la main pour le site final d'un client) |
 | `agence/index.html` | Ta page publique Jour Un |
 | `outils/kit-avis.html` | Affiche QR code pour que tes clients récoltent des avis Google |

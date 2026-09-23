@@ -14,7 +14,7 @@ import re
 import shutil
 import sys
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ICI = Path(__file__).resolve().parent
@@ -22,6 +22,7 @@ RACINE = ICI.parent
 sys.path.insert(0, str(RACINE / "generateur"))
 
 import generer_site  # noqa: E402
+from base import Base  # noqa: E402
 import kit  # noqa: E402
 import sources  # noqa: E402
 from metiers import METIERS, SAISONS, classer  # noqa: E402
@@ -29,6 +30,7 @@ from metiers import METIERS, SAISONS, classer  # noqa: E402
 DONNEES = ICI / "donnees"
 ITERATIONS = 250_000
 INDICATIFS = {"FR": "33", "CH": "41"}
+STATUTS_SUIVIS = {"Kit envoyé", "Relancé", "Intéressé", "Client"}
 
 
 def lire_json(chemin, defaut):
@@ -235,7 +237,8 @@ def config_maquette(p, config):
     }
 
 
-def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_passe="", exiger_chiffrement=False):
+def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_passe="", exiger_chiffrement=False,
+                    garder=frozenset()):
     if sortie.exists():
         shutil.rmtree(sortie)
     (sortie / "outils").mkdir(parents=True)
@@ -250,7 +253,7 @@ def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_pa
     (sortie / "index.html").write_text(agence, encoding="utf-8")
 
     age_max = config.get("age_max_jours", 90)
-    candidats = [p for p in prospects if eligible_kit(p, aujourdhui, age_max)]
+    candidats = [p for p in prospects if eligible_kit(p, aujourdhui, age_max) or p["id"] in garder]
     candidats.sort(key=lambda p: (-p["score"], p["nom"]))
     candidats = candidats[: config.get("kits_max", 300)]
     for p in candidats:
@@ -287,7 +290,7 @@ def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_pa
     shutil.copytree(ICI / "pwa", sortie / "cockpit")
     (sortie / "cockpit" / "index.html").write_text(cockpit, encoding="utf-8")
     (sortie / ".nojekyll").write_text("")
-    return len(candidats)
+    return candidats
 
 
 def chiffrer(texte, mot_de_passe):
@@ -325,9 +328,62 @@ def publications_clients(clients, aujourdhui):
         if c.get("metier") not in METIERS:
             log(f"  Client {c.get('nom')} : métier inconnu ({c.get('metier')}), ignoré")
             continue
-        resultat.append({"nom": c["nom"], "posts": [{"titre": t, "texte": x, "visuel": v}
-                                                     for t, x, v in publications(c, aujourdhui)]})
+        resultat.append({"id": c.get("id"), "nom": c["nom"], "posts": [{"titre": t, "texte": x, "visuel": v}
+                                                                     for t, x, v in publications(c, aujourdhui)]})
     return resultat
+
+
+# ---------- Base Supabase (panel web) ----------
+
+def url_kits(config):
+    if config.get("url_kits"):
+        return config["url_kits"].rstrip("/") + "/"
+    depot = os.environ.get("GITHUB_REPOSITORY", "")
+    if "/" not in depot:
+        return ""
+    proprietaire, nom = depot.split("/", 1)
+    return f"https://{proprietaire.lower()}.github.io/{nom}/"
+
+
+def charger_config(base):
+    config = json.loads((ICI / "config.json").read_text(encoding="utf-8"))
+    if base is None:
+        return config
+    lignes = base.lire("reglages", id="eq.1")
+    if lignes:
+        return {**config, **lignes[0]["data"]}
+    base.inserer("reglages", {"id": 1, "data": config})
+    return config
+
+
+def synchroniser(base, config, candidats, clients, aujourdhui):
+    racine = url_kits(config)
+    lignes = [{
+        "id": p["id"], "nom": p["nom"], "metier": p["metier"], "activite": p.get("activite") or None,
+        "adresse": p.get("adresse") or None, "ville": p.get("ville") or None, "code_postal": p.get("code_postal") or None,
+        "telephone": p.get("telephone") or None, "email": p.get("email") or None, "site_web": p.get("site_web") or None,
+        "date_creation": (p.get("date_creation") or "")[:10] or None, "premiere_detection": p.get("premiere_detection") or None,
+        "score": p.get("score", 0), "raisons": p.get("raisons", []),
+        "kit_url": racine + p["kit"] if racine and p.get("kit") else None, "maj": datetime.now(timezone.utc).isoformat(),
+    } for p in candidats]
+    base.upsert("prospects", lignes, "id")
+    gardes = {p["id"] for p in candidats}
+    anciens = {r["id"] for r in base.lire("prospects", select="id")} - gardes
+    base.supprimer_ids("prospects", anciens)
+
+    mois = aujourdhui.strftime("%Y-%m")
+    posts = [{"client_id": c["id"], "mois": mois, "posts": c["posts"]} for c in publications_clients(clients, aujourdhui)]
+    if posts:
+        base.upsert("publications", posts, "client_id,mois")
+
+    base.modifier("reglages", {"meta": {
+        "genere_le": datetime.now(timezone.utc).isoformat(),
+        "metiers": {k: v["libelle"] for k, v in METIERS.items()},
+        "url_kits": racine,
+        "indicatif": INDICATIFS[config.get("pays", "FR")],
+    }}, id="eq.1")
+    base.modifier("demandes", {"traitee_le": datetime.now(timezone.utc).isoformat()}, traitee_le="is.null")
+    log(f"Base mise à jour : {len(lignes)} prospects, {len(anciens)} retirés, {len(posts)} clients")
 
 
 def main():
@@ -340,7 +396,27 @@ def main():
     args = parser.parse_args()
 
     aujourdhui = date.fromisoformat(args.date) if args.date else date.today()
-    config = json.loads((ICI / "config.json").read_text(encoding="utf-8"))
+    url, cle = os.environ.get("SUPABASE_URL", "").strip(), os.environ.get("SUPABASE_SECRET", "").strip()
+    base = Base(url, cle) if url and cle else None
+    passage = base.inserer("passages", {"statut": "en cours"}) if base else None
+    try:
+        stats = executer(args, aujourdhui, base)
+    except Exception as err:
+        if passage:
+            base.modifier("passages", {"statut": "échec", "fin": datetime.now(timezone.utc).isoformat(),
+                                       "details": {"erreur": str(err)[:500]}}, id=f"eq.{passage['id']}")
+        raise
+    if passage:
+        base.modifier("passages", {"statut": "réussi", "fin": datetime.now(timezone.utc).isoformat(), "details": stats},
+                      id=f"eq.{passage['id']}")
+
+
+def executer(args, aujourdhui, base):
+    config = charger_config(base)
+    suivis = base.lire("suivi") if base else []
+    stops = {s["prospect_id"] for s in suivis if s.get("stop")}
+    garder = {s["prospect_id"] for s in suivis if s.get("statut") in STATUTS_SUIVIS and not s.get("stop")}
+    clients = base.lire("clients", order="cree_le") if base else lire_json(ICI / "clients.json", [])
     exclus = {str(x).replace(" ", "") for x in config.get("exclus", [])}
     prospects = lire_json(DONNEES / "prospects.json", [])
     avant = len(prospects)
@@ -348,7 +424,7 @@ def main():
     if not args.hors_ligne:
         log("Recherche de prospects…")
         prospects = fusionner(prospects, collecter(config, aujourdhui), aujourdhui.isoformat())
-    prospects = [p for p in prospects if p["id"].split("-", 1)[1] not in exclus]
+    prospects = [p for p in prospects if p["id"] not in stops and p["id"].split("-", 1)[1] not in exclus]
     secret = os.environ.get("COCKPIT_MOT_DE_PASSE", "")
     for p in prospects:
         p.pop("kit", None)
@@ -357,9 +433,12 @@ def main():
     ecrire_json(DONNEES / "prospects.json", sorted(prospects, key=lambda p: p["id"]))
     log(f"Prospects : {len(prospects)} (dont {len(prospects) - avant} nouveaux)")
 
-    n = construire_site(config, prospects, Path(args.sortie), aujourdhui, lire_json(ICI / "clients.json", []),
-                        secret, args.exiger_chiffrement)
-    log(f"Kits de lancement générés : {n}")
+    candidats = construire_site(config, prospects, Path(args.sortie), aujourdhui, clients,
+                                secret, args.exiger_chiffrement, garder)
+    log(f"Kits de lancement générés : {len(candidats)}")
+    if base:
+        synchroniser(base, config, candidats, clients, aujourdhui)
+    return {"prospects": len(prospects), "nouveaux": len(prospects) - avant, "kits": len(candidats)}
 
 
 if __name__ == "__main__":

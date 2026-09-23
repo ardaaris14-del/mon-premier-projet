@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#e8590c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jour Un">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icone-192.png">
+<link rel="apple-touch-icon" href="/icone-180.png">
+<title>Jour Un</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<form class="connexion" id="connexion" hidden>
+  <h1>Jour <span>Un</span></h1>
+  <p class="muted">Connecte-toi pour gérer tes prospects, tes clients et ta machine.</p>
+  <input type="email" id="email" autocomplete="username" placeholder="Email" required>
+  <input type="password" id="mdp" autocomplete="current-password" placeholder="Mot de passe" required minlength="8">
+  <button class="prim" type="submit">Se connecter</button>
+  <button type="button" id="creer">Première fois ? Créer mon compte</button>
+  <div class="msg" id="connexion-msg"></div>
+</form>
+
+<div class="page" id="app" hidden>
+  <header class="haut">
+    <h1>Jour <span>Un</span></h1>
+    <button id="deconnexion" style="font-size:13px;padding:6px 10px">Se déconnecter</button>
+  </header>
+  <div class="muted" id="maj"></div>
+
+  <nav class="onglets">
+    <button data-vers="prospects"><b>☎</b>Prospects</button>
+    <button data-vers="clients"><b>★</b>Clients</button>
+    <button data-vers="reglages"><b>⚙</b>Réglages</button>
+    <button data-vers="machine"><b>⟳</b>Machine</button>
+  </nav>
+
+  <section data-onglet="prospects">
+    <div class="stats" id="stats"></div>
+    <div class="filtres">
+      <input type="search" id="q" placeholder="Rechercher un nom, une ville…">
+      <select id="fm"><option value="">Tous les métiers</option></select>
+      <select id="fs"><option value="actifs">À traiter</option><option value="">Tous les statuts</option></select>
+      <label><input type="checkbox" id="fn"> Arrivés cette semaine</label>
+      <label><input type="checkbox" id="ft"> Avec téléphone</label>
+    </div>
+    <div id="liste"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
+      <button id="plus" hidden>Voir plus</button>
+      <button id="export">Exporter (CSV)</button>
+    </div>
+  </section>
+
+  <section data-onglet="clients" hidden>
+    <h2>Mes clients abonnés</h2>
+    <div class="bloc" id="clients-liste"><p class="muted">Chargement…</p></div>
+    <form class="bloc" id="client-ajout">
+      <h3>Ajouter un client</h3>
+      <div class="grille">
+        <div class="champ"><label>Nom de l'entreprise</label><input name="nom" required></div>
+        <div class="champ"><label>Métier</label><select name="metier" id="client-metier"></select></div>
+        <div class="champ"><label>Ville</label><input name="ville" required></div>
+        <div class="champ"><label>Téléphone (affiché dans ses publications)</label><input name="telephone"></div>
+      </div>
+      <button class="prim" type="submit">Ajouter</button>
+      <div class="msg" id="clients-msg"></div>
+    </form>
+    <h2>Publications du mois à publier</h2>
+    <p class="muted">Rédigées par la machine pour chacun de tes clients. Copie-les sur leur fiche Google, une par semaine.</p>
+    <div id="clients-posts"></div>
+  </section>
+
+  <section data-onglet="reglages" hidden>
+    <form id="reglages">
+      <h2>Mes coordonnées</h2>
+      <div class="bloc grille">
+        <div class="champ"><label>Prénom et nom</label><input name="moi.nom"></div>
+        <div class="champ"><label>Téléphone</label><input name="moi.telephone"></div>
+        <div class="champ"><label>Email</label><input name="moi.email" type="email"></div>
+        <div class="champ"><label>Ville</label><input name="moi.ville"></div>
+        <div class="champ"><label>N° IDE (laisser vide si tu n'en as pas)</label><input name="moi.siret"></div>
+      </div>
+      <h2>Mon offre</h2>
+      <div class="bloc grille">
+        <div class="champ"><label>Prix du kit</label><input name="offre.prix_kit" type="number" min="0"></div>
+        <div class="champ"><label>Prix du suivi par mois</label><input name="offre.prix_mois" type="number" min="0"></div>
+        <div class="champ"><label>Devise</label><input name="offre.devise"></div>
+        <div class="champ"><label>Lien de paiement (Stripe, etc.)</label><input name="offre.lien_paiement" placeholder="https://…"></div>
+      </div>
+      <h2>Où et qui prospecter</h2>
+      <div class="bloc">
+        <div class="champ"><label>Cantons</label><div class="cases" id="cases-cantons"></div></div>
+        <div class="champ"><label>Métiers</label>
+          <div class="cases"><label><input type="checkbox" id="tous-metiers"> Tous les métiers</label></div>
+          <div class="cases" id="cases-metiers" style="margin-top:6px"></div></div>
+      </div>
+      <h2>Mes messages</h2>
+      <div class="bloc">
+        <p class="muted">Mots remplacés automatiquement : {nom} (l'entreprise), {lien} (son kit), {moi}, {tel}, {ville}, {metier}.</p>
+        <div class="champ"><label>SMS / WhatsApp</label><textarea name="messages.sms"></textarea></div>
+        <div class="champ"><label>Objet de l'email</label><input name="messages.email_objet"></div>
+        <div class="champ"><label>Email</label><textarea name="messages.email" style="min-height:200px"></textarea></div>
+      </div>
+      <h2>Exclusions (« stop »)</h2>
+      <div class="bloc">
+        <div class="champ"><label>Numéros IDE à ne plus jamais contacter, un par ligne (le bouton Stop des prospects les gère aussi)</label><textarea name="exclus"></textarea></div>
+      </div>
+      <button class="prim" type="submit" style="width:100%;padding:14px">Enregistrer les réglages</button>
+      <div class="msg" id="reglages-msg"></div>
+    </form>
+    <h2>Mon compte</h2>
+    <form class="bloc" id="compte">
+      <p class="muted" id="compte-email"></p>
+      <div class="champ"><label>Nouveau mot de passe</label><input type="password" name="mdp" minlength="8" autocomplete="new-password" required></div>
+      <button type="submit">Changer mon mot de passe</button>
+      <div class="msg" id="compte-msg"></div>
+    </form>
+  </section>
+
+  <section data-onglet="machine" hidden>
+    <div class="bloc">
+      <div class="ligne"><h3>La machine</h3><button class="prim" id="lancer">Lancer maintenant</button></div>
+      <p class="muted">Elle tourne toute seule chaque matin vers 7 h. Un lancement demandé ici démarre dans les 15 minutes.</p>
+      <div class="msg" id="machine-msg"></div>
+      <div id="runs"><p class="muted">Chargement…</p></div>
+    </div>
+    <div class="bloc">
+      <h3>Liens utiles</h3>
+      <p><a id="lien-public" target="_blank">Ma page publique Jour Un</a></p>
+    </div>
+    <div class="bloc">
+      <h3>Installer l'appli sur ton téléphone</h3>
+      <p class="muted"><b>iPhone</b> (Safari) : bouton Partager → « Sur l'écran d'accueil ».<br>
+      <b>Android</b> (Chrome) : menu ⋮ → « Installer l'application » ou « Ajouter à l'écran d'accueil ».</p>
+    </div>
+  </section>
+</div>
+
+<script src="/app-1.js"></script>
+<script src="/app-2.js"></script>
+<script src="/app-3.js"></script>
+</body>
+</html>

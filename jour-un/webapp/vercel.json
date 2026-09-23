@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {"source": "/:chemin+", "destination": "https://cdn.jsdelivr.net/gh/ardaaris14-del/mon-premier-projet@6caed1364c66aef9ad63cc287bb22eae11495965/jour-un/webapp/:chemin+"}
+  ],
+  "headers": [
+    {"source": "/", "headers": [{"key": "Cache-Control", "value": "no-cache"}, {"key": "X-Robots-Tag", "value": "noindex, nofollow"}]}
+  ]
+}
