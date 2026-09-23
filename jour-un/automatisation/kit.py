@@ -67,7 +67,15 @@ def page_kit(p, config, lien_site):
     m = METIERS[p["metier"]]
     moi = config["moi"]
     offre = config["offre"]
-    lien_paiement = offre.get("lien_paiement") or f"tel:{''.join(c for c in moi['telephone'] if c.isdigit() or c == '+')}"
+    appel = f"tel:{''.join(c for c in moi['telephone'] if c.isdigit() or c == '+')}"
+    devise = offre.get("devise", "€")
+    lien_suivi, lien_kit = offre.get("lien_paiement"), offre.get("lien_paiement_kit")
+    if lien_suivi and lien_kit:
+        boutons = (f'<a class="btn" href="{e(lien_suivi)}">Kit + suivi : {e(offre["prix_kit"])} {e(devise)} '
+                   f'+ {e(offre["prix_mois"])} {e(devise)}/mois</a>'
+                   f'<a class="btn" href="{e(lien_kit)}">Kit seul : {e(offre["prix_kit"])} {e(devise)}</a>')
+    else:
+        boutons = f'<a class="btn" href="{e(lien_suivi or lien_kit or appel)}">Je prends mon kit</a>'
     tel = p.get("telephone") or "Votre numéro"
     email = p.get("email") or "votre-email@exemple.fr"
     svgs = logos(p["nom"], m["couleur"])
@@ -87,8 +95,8 @@ def page_kit(p, config, lien_site):
         "posts": "".join(f'<div class="post"><b>{e(t)}</b><p>{e(x)}</p></div>' for t, x in premieres_publications(p)),
         "prix_kit": e(offre["prix_kit"]),
         "prix_mois": e(offre["prix_mois"]),
-        "devise": e(offre.get("devise", "€")),
-        "lien_paiement": e(lien_paiement),
+        "devise": e(devise),
+        "boutons_paiement": boutons,
         "moi": e(moi["nom"]),
         "moi_tel": e(moi["telephone"]),
         "moi_email": e(moi["email"]),

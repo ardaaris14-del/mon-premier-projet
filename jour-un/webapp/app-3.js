@@ -1,4 +1,6 @@
 /* ---------- Clients ---------- */
+const formuleClient = c => c.formule === "kit" ? '<span class="tag">Kit seul</span>'
+  : c.suivi ? '<span class="tag new">Avec suivi</span>' : '<span class="tag">Suivi arrêté</span>';
 async function chargerClients() {
   try {
     const mois = maintenant().slice(0, 7);
@@ -6,9 +8,10 @@ async function chargerClients() {
       sb.from("clients").select("*").order("cree_le").then(verifier),
       sb.from("publications").select("*").eq("mois", mois).then(verifier),
     ]);
-    $("clients-liste").innerHTML = clients.length ? clients.map(c => `<div class="run"><div><b>${esc(c.nom)}</b>
-      <div class="muted">${esc(metiers()[c.metier] || c.metier)} · ${esc(c.ville)}${c.telephone ? " · " + esc(c.telephone) : ""}</div></div>
-      <button data-retirer="${esc(c.id)}">Retirer</button></div>`).join("") : '<p class="muted">Aucun client abonné pour l\'instant.</p>';
+    $("clients-liste").innerHTML = clients.length ? clients.map(c => `<div class="run"><div><b>${esc(c.nom)}</b> ${formuleClient(c)}
+      <div class="muted">${esc(metiers()[c.metier] || c.metier)}${c.ville ? " · " + esc(c.ville) : ""}${c.telephone ? " · " + esc(c.telephone) : ""}</div></div>
+      <div class="actions" style="margin:0">${c.formule === "kit" ? "" : `<button data-suivi="${esc(c.id)}" data-actif="${c.suivi}">${c.suivi ? "Arrêter le suivi" : "Reprendre le suivi"}</button>`}
+      <button data-retirer="${esc(c.id)}">Retirer</button></div></div>`).join("") : '<p class="muted">Aucun client pour l\'instant.</p>';
     const noms = Object.fromEntries(clients.map(c => [c.id, c.nom]));
     $("clients-posts").innerHTML = posts.map(x => `<div class="bloc"><b>${esc(noms[x.client_id] || "")}</b>${
       x.posts.map((p, i) => `<div class="post"><b>Semaine ${i + 1} — ${esc(p.titre)}</b><p>${esc(p.texte)}</p>
@@ -24,9 +27,10 @@ $("client-ajout").addEventListener("submit", async e => {
   const bouton = e.target.querySelector("button");
   bouton.disabled = true;
   try {
-    await sb.from("clients").insert({ nom: f.nom.trim(), metier: f.metier, ville: f.ville.trim(), telephone: f.telephone.trim() || null }).then(verifier);
+    await sb.from("clients").insert({ nom: f.nom.trim(), metier: f.metier, ville: f.ville.trim(), telephone: f.telephone.trim() || null,
+      formule: f.formule, suivi: f.formule === "kit+suivi" }).then(verifier);
     e.target.reset();
-    message("clients-msg", "Client ajouté ✓ Ses publications apparaîtront après le prochain passage de la machine.", true);
+    message("clients-msg", f.formule === "kit" ? "Client ajouté ✓" : "Client ajouté ✓ Ses publications apparaîtront après le prochain passage de la machine.", true);
     chargerClients();
   } catch (err) {
     message("clients-msg", err.message, false);
@@ -34,8 +38,16 @@ $("client-ajout").addEventListener("submit", async e => {
   bouton.disabled = false;
 });
 $("clients-liste").addEventListener("click", async e => {
+  const s = e.target.closest("[data-suivi]");
+  if (s) {
+    const actif = s.dataset.actif === "true";
+    if (actif && !confirm("Arrêter le suivi de ce client ? La machine ne rédigera plus ses publications. S'il paie par Stripe, résilie aussi son abonnement dans Stripe (la résiliation Stripe arrête le suivi ici toute seule).")) return;
+    try { await sb.from("clients").update({ suivi: !actif }).eq("id", s.dataset.suivi).then(verifier); chargerClients(); }
+    catch (err) { message("clients-msg", err.message, false); }
+    return;
+  }
   const b = e.target.closest("[data-retirer]");
-  if (!b || !confirm("Retirer ce client de ta liste d'abonnés ?")) return;
+  if (!b || !confirm("Retirer ce client de ta liste ? Ses ventes restent dans l'onglet Ventes.")) return;
   try { await sb.from("clients").delete().eq("id", b.dataset.retirer).then(verifier); chargerClients(); }
   catch (err) { message("clients-msg", err.message, false); }
 });
@@ -133,5 +145,3 @@ $("lancer").addEventListener("click", async e => {
   }
   e.target.disabled = false;
 });
-
-sb.auth.onAuthStateChange((evenement, session) => { if (evenement !== "TOKEN_REFRESHED") afficher(session); });

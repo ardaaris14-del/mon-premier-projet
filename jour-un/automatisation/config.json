@@ -12,7 +12,8 @@
   "prix_kit": 290,
   "prix_mois": 39,
   "devise": "CHF",
-  "lien_paiement": ""
+  "lien_paiement": "",
+  "lien_paiement_kit": ""
  },
  "zone": {
   "cantons": ["JU", "NE", "VD", "GE", "FR", "VS"],

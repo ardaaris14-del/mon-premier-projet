@@ -35,6 +35,7 @@
   <nav class="onglets">
     <button data-vers="prospects"><b>☎</b>Prospects</button>
     <button data-vers="clients"><b>★</b>Clients</button>
+    <button data-vers="ventes"><b>▲</b>Ventes</button>
     <button data-vers="reglages"><b>⚙</b>Réglages</button>
     <button data-vers="machine"><b>⟳</b>Machine</button>
   </nav>
@@ -56,7 +57,7 @@
   </section>
 
   <section data-onglet="clients" hidden>
-    <h2>Mes clients abonnés</h2>
+    <h2>Mes clients</h2>
     <div class="bloc" id="clients-liste"><p class="muted">Chargement…</p></div>
     <form class="bloc" id="client-ajout">
       <h3>Ajouter un client</h3>
@@ -65,13 +66,39 @@
         <div class="champ"><label>Métier</label><select name="metier" id="client-metier"></select></div>
         <div class="champ"><label>Ville</label><input name="ville" required></div>
         <div class="champ"><label>Téléphone (affiché dans ses publications)</label><input name="telephone"></div>
+        <div class="champ"><label>Formule</label><select name="formule"><option value="kit+suivi">Kit + suivi mensuel</option><option value="kit">Kit seul</option></select></div>
       </div>
       <button class="prim" type="submit">Ajouter</button>
       <div class="msg" id="clients-msg"></div>
     </form>
     <h2>Publications du mois à publier</h2>
-    <p class="muted">Rédigées par la machine pour chacun de tes clients. Copie-les sur leur fiche Google, une par semaine.</p>
+    <p class="muted">Rédigées par la machine pour chacun de tes clients avec suivi. Copie-les sur leur fiche Google, une par semaine.</p>
     <div id="clients-posts"></div>
+  </section>
+
+  <section data-onglet="ventes" hidden>
+    <div class="stats" id="ventes-stats"></div>
+    <div class="bloc">
+      <h3>Avec suivi ou sans suivi ?</h3>
+      <div id="ventes-part"></div>
+    </div>
+    <div class="bloc">
+      <h3>Mes liens de paiement</h3>
+      <p class="muted">Les paiements Stripe arrivent ici tout seuls : la vente est enregistrée, le client est créé et le prospect passe en « Client ».</p>
+      <div id="ventes-liens"></div>
+    </div>
+    <h2>Dernières ventes</h2>
+    <div class="bloc" id="ventes-liste"><p class="muted">Chargement…</p></div>
+    <form class="bloc" id="vente-ajout">
+      <h3>Ajouter une vente payée autrement (TWINT, virement, espèces)</h3>
+      <div class="grille">
+        <div class="champ"><label>Entreprise</label><input name="entreprise" required></div>
+        <div class="champ"><label>Vente</label><select name="offre"><option value="kit+suivi">Kit + suivi</option><option value="kit">Kit seul</option><option value="mois">Mensualité de suivi</option></select></div>
+        <div class="champ"><label>Montant</label><input name="montant" type="number" min="0" step="0.05" required></div>
+      </div>
+      <button class="prim" type="submit">Ajouter la vente</button>
+      <div class="msg" id="ventes-msg"></div>
+    </form>
   </section>
 
   <section data-onglet="reglages" hidden>
@@ -89,7 +116,8 @@
         <div class="champ"><label>Prix du kit</label><input name="offre.prix_kit" type="number" min="0"></div>
         <div class="champ"><label>Prix du suivi par mois</label><input name="offre.prix_mois" type="number" min="0"></div>
         <div class="champ"><label>Devise</label><input name="offre.devise"></div>
-        <div class="champ"><label>Lien de paiement (Stripe, etc.)</label><input name="offre.lien_paiement" placeholder="https://…"></div>
+        <div class="champ"><label>Lien de paiement kit + suivi</label><input name="offre.lien_paiement" placeholder="https://buy.stripe.com/…"></div>
+        <div class="champ"><label>Lien de paiement kit seul</label><input name="offre.lien_paiement_kit" placeholder="https://buy.stripe.com/…"></div>
       </div>
       <h2>Où et qui prospecter</h2>
       <div class="bloc">
@@ -143,5 +171,6 @@
 <script src="/app-1.js"></script>
 <script src="/app-2.js"></script>
 <script src="/app-3.js"></script>
+<script src="/app-4.js"></script>
 </body>
 </html>
