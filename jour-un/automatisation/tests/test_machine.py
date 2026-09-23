@@ -123,9 +123,23 @@ class Machine(unittest.TestCase):
         clients = [{"nom": "Plomberie Durand", "metier": "plombier", "ville": "Villeurbanne"},
                    {"nom": "Inconnu", "metier": "astronaute", "ville": "Lyon"}]
         res = machine.publications_clients(clients, AUJOURDHUI)
+        sans_ville = machine.publications({"nom": "X", "metier": "garage", "ville": ""}, AUJOURDHUI)
+        self.assertTrue(all(" à  " not in x and "de  " not in x for _, x, _ in sans_ville))
+        self.assertIn("dans la région", sans_ville[1][1])
         self.assertEqual(len(res), 1)
         self.assertEqual(len(res[0]["posts"]), 4)
         self.assertIn("chaudière", res[0]["posts"][0]["texte"])
+
+    def test_boutons_de_paiement(self):
+        import kit
+        config = json.loads(json.dumps(CONFIG))
+        p = {"nom": "Test Sàrl", "metier": "coiffeur", "ville": "Delémont"}
+        config["offre"].update(lien_paiement="https://pay/suivi", lien_paiement_kit="https://pay/kit")
+        page = kit.page_kit(p, config, "x")
+        self.assertIn('href="https://pay/suivi">Kit + suivi', page)
+        self.assertIn('href="https://pay/kit">Kit seul', page)
+        config["offre"].update(lien_paiement="", lien_paiement_kit="")
+        self.assertIn('href="tel:', kit.page_kit(p, config, "x").split('class="offre"')[1])
 
     def test_cockpit_chiffre(self):
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -279,7 +293,8 @@ class Supabase(unittest.TestCase):
             "reglages": [{"id": 1, "data": {**CONFIG, "pays": "FR"}, "meta": {}}],
             "suivi": [{"prospect_id": "c-999", "statut": "Intéressé", "stop": False},
                       {"prospect_id": stoppe["id"], "statut": "Pas intéressé", "stop": True}],
-            "clients": [{"id": "u1", "nom": "Garage Test", "metier": "garage", "ville": "Delémont"}],
+            "clients": [{"id": "u1", "nom": "Garage Test", "metier": "garage", "ville": "Delémont", "suivi": True},
+                        {"id": "u2", "nom": "Kit Seul", "metier": "coiffeur", "ville": "Porrentruy", "formule": "kit", "suivi": False}],
             "prospects": [{"id": "obsolete"}],
             "demandes": [{"id": 1, "traitee_le": None}],
         })
@@ -300,7 +315,7 @@ class Supabase(unittest.TestCase):
         self.assertEqual(stats["kits"], len(ids))
         vieux = next(p for p in fausse.t["prospects"] if p["id"] == "c-999")
         self.assertTrue(vieux["kit_url"].startswith("https://moi.github.io/projet/k/"))
-        self.assertEqual(fausse.t["publications"][0]["client_id"], "u1")
+        self.assertEqual([x["client_id"] for x in fausse.t["publications"]], ["u1"], "pas de publications sans suivi")
         self.assertIsNotNone(fausse.t["demandes"][0]["traitee_le"])
         self.assertIn("coiffeur", fausse.t["reglages"][0]["meta"]["metiers"])
 

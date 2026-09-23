@@ -72,6 +72,7 @@ function montrer(nom) {
   document.querySelectorAll("nav.onglets button").forEach(b => b.classList.toggle("actif", b.dataset.vers === nom));
   stock.set("ju-onglet", nom);
   if (nom === "clients") chargerClients();
+  if (nom === "ventes") chargerVentes();
   if (nom === "reglages") remplirReglages();
   if (nom === "machine") chargerMachine();
 }

@@ -309,16 +309,17 @@ def publications(client, aujourdhui):
     m = METIERS[client["metier"]]
     saison = SAISONS[aujourdhui.month]
     service, texte = m["services"][aujourdhui.month % len(m["services"])]
-    ville = client["ville"]
+    ville = client.get("ville") or ""
+    a_ville, de_ville = (f"à {ville}", f"de {ville}") if ville else ("dans la région", "de la région")
     contact = f" Contactez-nous au {client['telephone']}." if client.get("telephone") else ""
     return [
         ("Conseil de saison", f"{m['conseils'][saison]}{contact}", "Photo de vous en intervention ou de votre équipe."),
-        (f"Service à la une : {service}", f"{texte} Nous intervenons à {ville} et dans les environs. Devis gratuit.{contact}",
+        (f"Service à la une : {service}", f"{texte} Nous intervenons {a_ville} et dans les environs. Devis gratuit.{contact}",
          f"Photo d'une réalisation « {service.lower()} »."),
         ("Réalisation du mois", f"[À compléter avec le client : ce qui a été fait, où, en combien de temps.] "
-         f"Encore merci à notre client de {ville} pour sa confiance !", "Photos avant / après (demander au client)."),
+         f"Encore merci à notre client {de_ville} pour sa confiance !", "Photos avant / après (demander au client)."),
         ("Merci pour vos avis", f"Merci à tous nos clients qui prennent le temps de laisser un avis : c'est grâce à vous que "
-         f"d'autres habitants de {ville} nous découvrent. Votre avis compte !", "Capture d'un avis récent ou photo de l'affiche QR code."),
+         f"d'autres habitants {de_ville} nous découvrent. Votre avis compte !", "Capture d'un avis récent ou photo de l'affiche QR code."),
     ]
 
 
@@ -416,7 +417,9 @@ def executer(args, aujourdhui, base):
     suivis = base.lire("suivi") if base else []
     stops = {s["prospect_id"] for s in suivis if s.get("stop")}
     garder = {s["prospect_id"] for s in suivis if s.get("statut") in STATUTS_SUIVIS and not s.get("stop")}
-    clients = base.lire("clients", order="cree_le") if base else lire_json(ICI / "clients.json", [])
+    # Seuls les clients avec le suivi mensuel actif reçoivent leurs publications du mois.
+    clients = [c for c in (base.lire("clients", order="cree_le") if base else lire_json(ICI / "clients.json", []))
+               if c.get("suivi", True)]
     exclus = {str(x).replace(" ", "") for x in config.get("exclus", [])}
     prospects = lire_json(DONNEES / "prospects.json", [])
     avant = len(prospects)

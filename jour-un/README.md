@@ -58,7 +58,8 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
 | Onglet | Ce que tu y fais |
 |---|---|
 | **Prospects** | Les nouvelles entreprises et leur kit : Annuaire, Appeler, SMS après accord, statut, bouton **Stop** (retire définitivement l'entreprise et supprime son kit) |
-| **Clients** | Ajouter ou retirer un client abonné, copier ses 4 publications du mois |
+| **Clients** | Tes clients (avec suivi ou kit seul), arrêter ou reprendre un suivi, copier les 4 publications du mois |
+| **Ventes** | Tes statistiques : kit + suivi, kit seul, part avec suivi, abonnements actifs, encaissé du mois ; tes 2 liens de paiement ; ajout d'une vente payée par TWINT ou en espèces |
 | **Réglages** | Tes coordonnées, tes prix, ton lien de paiement, tes cantons, tes métiers, tes messages, les exclusions, ton mot de passe |
 | **Machine** | Voir les derniers passages du robot, le relancer d'un bouton |
 
@@ -98,9 +99,11 @@ tu peux aussi **passer les voir**, téléphone en main avec leur kit ouvert.
 | **Kit de lancement** | **CHF 290** une fois | Site en ligne sur son nom de domaine .ch (1 an inclus), logo en haute définition, carte de visite prête à imprimer, fiche Google créée avec lui + 4 publications |
 | **Suivi** (option) | **CHF 39/mois** sans engagement | Hébergement, modifications, 4 publications par mois (rédigées par la machine), réponse aux avis |
 
-**Encaisser sans frais fixes :** TWINT ou virement (avec facture QR), ou un lien de paiement Stripe (gratuit à créer, commission seulement
-sur les ventes, accepte TWINT et les cartes). Colle ton lien dans `offre.lien_paiement` de la config : il apparaît sur chaque kit.
-Sans lien, le bouton du kit appelle ton numéro.
+**Encaisser :** deux liens de paiement Stripe sont en place, **Kit + suivi** (CHF 290 + CHF 39/mois) et **Kit seul**
+(CHF 290). Ils apparaissent sur chaque kit et se modifient dans l'appli (onglet Réglages). Chaque paiement arrive tout
+seul dans l'appli : la vente est enregistrée, le client est créé (retrouvé parmi tes prospects par son téléphone ou son
+nom) et, s'il résilie son abonnement dans Stripe, son suivi s'arrête. Seuls les paiements passés par ces 2 liens sont
+comptés. Un client qui paie par TWINT ou en espèces s'ajoute à la main dans l'onglet Ventes.
 
 **Ton coût par vente :** environ CHF 15 de nom de domaine .ch, payés avec les CHF 290 du client.
 
@@ -164,6 +167,7 @@ cantonales et aux structures d'aide à la création (Créapole dans le Jura, par
 | `automatisation/base.py`, `decision.py` | Lien avec la base Supabase, et décision de lancer la machine (matin ou demande depuis l'appli) |
 | `automatisation/cockpit.html` | Le cockpit de secours |
 | `webapp/` | Ton appli Jour Un, en ligne sur Vercel |
+| `supabase/functions/stripe-webhook/` | Reçoit les paiements Stripe et les enregistre dans ta base |
 | `generateur/` | Le générateur de site (utilisé par la machine, ou à la main pour le site final d'un client) |
 | `agence/index.html` | Ta page publique Jour Un |
 | `outils/kit-avis.html` | Affiche QR code pour que tes clients récoltent des avis Google |

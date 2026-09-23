@@ -52,3 +52,8 @@ button:disabled{opacity:.5;cursor:wait}
 .run{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
 .pastille{font-size:13px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--soft)}
 .pastille.ok{background:#e7f6ec;color:var(--ok)}.pastille.ko{background:#fdecec;color:var(--ko)}.pastille.encours{background:#fff4e5;color:#b45309}
+.barre{display:flex;height:34px;border-radius:10px;overflow:hidden;background:var(--soft);margin:8px 0;font-size:13px;font-weight:600;color:#fff}
+.barre span{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden}
+.barre .avec{background:var(--ok)}.barre .sans{background:var(--bleu)}
+.lien-pay{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.lien-pay code{font-size:12px;background:var(--soft);padding:4px 8px;border-radius:6px;word-break:break-all;flex:1 1 200px}
