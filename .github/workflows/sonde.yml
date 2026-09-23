@@ -1,0 +1,40 @@
+name: Sonde API suisses (temporaire)
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  sonde:
+    runs-on: ubuntu-latest
+    steps:
+      - name: FOSC - liste des nouvelles inscriptions (JSON)
+        run: |
+          curl -sS -m 60 -H "Accept: application/json" \
+            "https://amtsblattportal.ch/api/v1/publications?publicationStates=PUBLISHED&rubrics=HR&subRubrics=HR01&cantons=JU&pageRequest.page=0&pageRequest.size=2" \
+            -o liste.json -w "HTTP %{http_code}\n" || true
+          head -c 5000 liste.json; echo
+      - name: FOSC - detail XML de la premiere publication
+        run: |
+          ID=$(python3 -c "import json;d=json.load(open('liste.json'));c=d.get('content') or d.get('items') or d;print((c[0].get('meta') or c[0])['id'])" 2>/dev/null || true)
+          echo "ID=$ID"
+          if [ -n "$ID" ]; then
+            curl -sS -m 60 "https://amtsblattportal.ch/api/v1/publications/$ID/xml" -o detail.xml -w "HTTP %{http_code}\n" || true
+            head -c 7000 detail.xml; echo
+          fi
+      - name: FOSC - autres formes de parametres
+        run: |
+          for u in \
+            "https://amtsblattportal.ch/api/v1/publications?rubrics=HR&subRubrics=HR01&pageRequest.size=1" \
+            "https://amtsblattportal.ch/api/v1/publications/xml?rubrics=HR&subRubrics=HR01&cantons=JU&pageRequest.size=1" \
+            "https://amtsblattportal.ch/api/v1/api-docs" \
+            "https://amtsblattportal.ch/api/v1/v3/api-docs" ; do
+            echo "== $u"; curl -sS -m 60 "$u" -w "\nHTTP %{http_code}\n" | head -c 1500; echo
+          done
+      - name: Overpass - canton du Jura
+        run: |
+          curl -sS -m 120 https://overpass-api.de/api/interpreter \
+            --data-urlencode 'data=[out:json][timeout:60];area["ISO3166-2"="CH-JU"]->.a;(nwr["shop"="hairdresser"](area.a););out center tags 3;' \
+            -w "\nHTTP %{http_code}\n" | head -c 2500
