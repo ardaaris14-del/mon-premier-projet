@@ -1,4 +1,4 @@
-"""Kit Jour Un : logo, carte de visite, texte de fiche Google et premières publications, générés pour une entreprise."""
+"""Kit web-design.ch : logo, carte de visite, texte de fiche Google et premières publications, générés pour une entreprise."""
 from html import escape
 from string import Template
 from pathlib import Path

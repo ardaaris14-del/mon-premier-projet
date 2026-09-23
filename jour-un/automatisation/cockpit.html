@@ -6,11 +6,11 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#e8590c">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Jour Un">
+<meta name="apple-mobile-web-app-title" content="web-design.ch">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icone-192.png">
 <link rel="apple-touch-icon" href="icone-180.png">
-<title>Jour Un — Admin</title>
+<title>web-design.ch — Admin</title>
 <style>
 :root{--c:#e8590c;--bleu:#0b63ce;--ink:#14161a;--muted:#5b616e;--line:#e3e6eb;--soft:#f4f6f9;--ok:#1b873f;--ko:#c62828}
 *{box-sizing:border-box}
@@ -72,7 +72,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:13px}
 </head>
 <body>
 <form class="verrou" id="verrou" hidden>
-  <h1>Jour <span>Un</span> · Admin</h1>
+  <h1>web-design<span>.ch</span> · Admin</h1>
   <p class="muted" id="verrou-msg">Entre ton mot de passe (celui du secret COCKPIT_MOT_DE_PASSE).</p>
   <input type="password" id="mdp" autocomplete="current-password" placeholder="Mot de passe">
   <label class="muted"><input type="checkbox" id="retenir" checked> Se souvenir sur cet appareil</label>
@@ -81,7 +81,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:13px}
 
 <div class="page" id="contenu" hidden>
   <header class="haut">
-    <h1>Jour <span>Un</span> · Admin</h1>
+    <h1>web-design<span>.ch</span> · Admin</h1>
     <button id="deconnexion" class="muted" style="font-size:13px;padding:6px 10px">Verrouiller</button>
   </header>
   <div class="muted" id="maj"></div>
@@ -190,7 +190,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:13px}
     </div>
     <div class="bloc">
       <h3>Liens utiles</h3>
-      <p><a href="../" target="_blank">Ma page publique Jour Un</a></p>
+      <p><a href="../" target="_blank">Ma page publique web-design.ch</a></p>
       <p><a id="lien-actions" target="_blank">Les lancements sur GitHub</a></p>
     </div>
     <div class="bloc">
@@ -207,7 +207,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:13px}
     <p class="muted">Pour modifier tes réglages, tes clients et relancer la machine, le panel a besoin d'une clé d'accès à ton projet GitHub. Elle reste sur cet appareil.</p>
     <ol class="muted">
       <li>Ouvre <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">github.com/settings/personal-access-tokens/new</a></li>
-      <li><b>Token name</b> : <code>Jour Un admin</code> · <b>Expiration</b> : 1 an (366 days) ou « No expiration »</li>
+      <li><b>Token name</b> : <code>web-design.ch admin</code> · <b>Expiration</b> : 1 an (366 days) ou « No expiration »</li>
       <li><b>Repository access</b> : « Only select repositories » → <code data-depot></code></li>
       <li><b>Permissions → Repository permissions</b> : <b>Contents</b> → « Read and write », et <b>Actions</b> → « Read and write »</li>
       <li>Clique sur <b>Generate token</b>, copie la clé (elle commence par <code>github_pat_</code>) et colle-la ici :</li>
@@ -601,7 +601,7 @@ async function ouvrir(mdp, retenir) {
 }
 if (CHARGE.manquant) {
   $("verrou").hidden = false;
-  $("verrou").innerHTML = '<h1>Jour <span>Un</span> · Admin</h1><p class="muted">Pour protéger les données, le panel reste vide tant que le secret COCKPIT_MOT_DE_PASSE n\'est pas créé dans GitHub, puis que la machine n\'a pas tourné une fois (voir le README).</p>';
+  $("verrou").innerHTML = '<h1>web-design<span>.ch</span> · Admin</h1><p class="muted">Pour protéger les données, le panel reste vide tant que le secret COCKPIT_MOT_DE_PASSE n\'est pas créé dans GitHub, puis que la machine n\'a pas tourné une fois (voir le README).</p>';
 } else if (CHARGE.chiffre) {
   const memo = stock.get("vl-mdp");
   if (memo) ouvrir(memo, true); else $("verrou").hidden = false;

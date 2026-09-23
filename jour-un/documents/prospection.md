@@ -1,4 +1,4 @@
-# Scripts Jour Un (Suisse)
+# Scripts web-design.ch (Suisse)
 
 Règle d'or : **tu ne vends rien, tu montres.** Le kit fait la vente. Ton seul objectif au téléphone : obtenir un
 « oui, envoyez-moi le lien ».
@@ -19,7 +19,7 @@ Ne cherche pas plus de 2 minutes : passe à la suivante.
 
 ## 2. L'appel (le cœur du métier)
 
-> « Bonjour, je suis Arda, de Jour Un. J'ai vu dans la Feuille officielle du commerce que [Nom] venait d'être inscrite :
+> « Bonjour, je suis Arda, de web-design.ch. J'ai vu dans la Feuille officielle du commerce que [Nom] venait d'être inscrite :
 > félicitations !
 >
 > J'aide les nouvelles entreprises de la région à trouver leurs premiers clients, et j'ai pris l'initiative de vous préparer
@@ -42,7 +42,7 @@ Meilleurs créneaux : 8 h 30 – 11 h et 14 h – 16 h 30. Évite les lundis mat
 
 ## 4. Les relances (seulement si la personne a accepté de recevoir le kit)
 
-- **J+3** : « Bonjour, c'est Arda de Jour Un. Vous avez pu jeter un œil à votre kit ? Je peux changer les couleurs ou le logo si vous voulez. »
+- **J+3** : « Bonjour, c'est Arda de web-design.ch. Vous avez pu jeter un œil à votre kit ? Je peux changer les couleurs ou le logo si vous voulez. »
 - **J+10** : « Dernier message de ma part : votre kit reste disponible cette semaine, ensuite je le retire. Belle continuation ! »
 - Rien après ça. Au moindre « stop », ajoute son numéro IDE dans `exclus`.
 
@@ -66,7 +66,7 @@ Meilleurs créneaux : 8 h 30 – 11 h et 14 h – 16 h 30. Évite les lundis mat
 >
 > Bonjour,
 >
-> Je m'appelle Arda Aris et j'ai créé Jour Un : pour chaque nouvelle entreprise, je prépare un kit de lancement complet
+> Je m'appelle Arda Aris et j'ai créé web-design.ch : pour chaque nouvelle entreprise, je prépare un kit de lancement complet
 > (site internet, logo, carte de visite, fiche Google), à son nom, avant même qu'elle le demande.
 >
 > Je vous propose de l'**offrir à vos clients qui créent leur société** : vous me transmettez le nom de l'entreprise, je prépare

@@ -8,7 +8,7 @@ const texte = new TextEncoder();
 const TOLERANCE = 300;
 let cles: { secret: string; liens: string[] } | null = null;
 
-// Le secret de signature et les liens de paiement Jour Un (les autres ventes du compte Stripe sont ignorées).
+// Le secret de signature et les liens de paiement web-design.ch (les autres ventes du compte Stripe sont ignorées).
 async function lireCles() {
   if (!cles) {
     const { data, error } = await sb.from("cles").select("nom, valeur").in("nom", ["stripe_webhook", "stripe_liens"]);

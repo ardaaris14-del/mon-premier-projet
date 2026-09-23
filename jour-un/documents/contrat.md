@@ -1,8 +1,8 @@
-# Conditions de vente — Jour Un
+# Conditions de vente — web-design.ch
 
 *Modèle simple, à adapter. En cas de doute, fais-le relire par un professionnel du droit. À envoyer au client avec le lien de paiement.*
 
-**Prestataire :** Arda Aris, Jour Un, entreprise individuelle, [adresse], 2345 Les Breuleux, ardaaris14@gmail.com, 076 698 40 59.
+**Prestataire :** Arda Aris, web-design.ch, entreprise individuelle, [adresse], 2345 Les Breuleux, ardaaris14@gmail.com, 076 698 40 59.
 **Client :** [Raison sociale], IDE [CHE-…], [adresse], représentée par [nom].
 
 ## 1. Kit de lancement — CHF 290 (paiement unique)
