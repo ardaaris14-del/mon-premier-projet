@@ -1,4 +1,4 @@
-"""La machine Jour Un : trouve les entreprises nouvelles, prépare leur kit de lancement et le cockpit.
+"""La machine web-design.ch : trouve les entreprises nouvelles, prépare leur kit de lancement et le cockpit.
 
 Usage :
     python3 machine.py               # tout (avec recherche de nouveaux prospects)

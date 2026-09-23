@@ -1,6 +1,6 @@
 {
- "name": "Jour Un — Admin",
- "short_name": "Jour Un",
+ "name": "web-design.ch — Admin",
+ "short_name": "web-design.ch",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",

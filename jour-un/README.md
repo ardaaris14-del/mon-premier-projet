@@ -1,4 +1,4 @@
-# Jour Un
+# web-design.ch
 
 **Le lendemain de la naissance d'une entreprise, son site, son logo, sa carte de visite et sa fiche Google sont déjà prêts, à son nom.**
 
@@ -16,7 +16,7 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
 
 ## Pourquoi c'est différent
 
-| Une agence web classique | Jour Un |
+| Une agence web classique | web-design.ch |
 |---|---|
 | Cherche des clients, puis fait le travail | **Fait le travail d'abord**, puis le montre |
 | Vend une promesse (« je vais vous faire un site ») | Montre le résultat (« voici **votre** site ») |
@@ -32,7 +32,7 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
    reconnus. Les autres entreprises reçoivent un kit générique, construit à partir de leur propre activité.
 4. **Fabrique le kit** : site adapté aux téléphones, 3 logos, carte de visite, texte de fiche Google, 4 premières publications.
 5. **Met tout en ligne** gratuitement sur GitHub Pages. Les liens sont impossibles à deviner et invisibles sur Google.
-6. **Remplit ton appli Jour Un** (base Supabase) : pour chaque entreprise, son activité et des boutons
+6. **Remplit ton appli web-design.ch** (base Supabase) : pour chaque entreprise, son activité et des boutons
    *Voir son kit*, *Annuaire*, *Google*, *Appeler*, *SMS* et *WhatsApp*, avec le message déjà rempli.
 7. **Rédige les 4 publications du mois** de chacun de tes clients abonnés (onglet « Clients » de l'appli).
 
@@ -44,15 +44,15 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
    Name : `SUPABASE_SECRET`, Secret : la clé copiée. Ne la donne à personne.
 3. **Créer ton mot de passe de secours** : même endroit, Name : `COCKPIT_MOT_DE_PASSE`, Secret : un mot de passe long.
    Il protège le cockpit de secours et rend les liens des kits impossibles à deviner.
-4. **Créer ton compte dans l'appli** : ouvre `https://jour-un-three.vercel.app`, tape ton email
+4. **Créer ton compte dans l'appli** : ouvre `https://web-design-ch.vercel.app`, tape ton email
    (ardaaris14@gmail.com) et un mot de passe d'au moins 8 caractères, puis **« Première fois ? Créer mon compte »**.
    Seul ton email est autorisé : personne d'autre ne peut créer de compte.
 5. **Lancer la machine** : dans l'appli, onglet *Machine → Lancer maintenant* (elle démarre dans les 15 minutes).
    Au premier lancement, elle lit les 45 derniers jours, ce qui peut prendre 10 à 20 minutes.
 
-## Ton appli Jour Un (téléphone et ordinateur)
+## Ton appli web-design.ch (téléphone et ordinateur)
 
-`https://jour-un-three.vercel.app` : connecte-toi, puis installe-la comme une appli
+`https://web-design-ch.vercel.app` : connecte-toi, puis installe-la comme une appli
 (iPhone : Partager → « Sur l'écran d'accueil » ; Android : menu ⋮ → « Installer l'application »).
 
 | Onglet | Ce que tu y fais |
@@ -166,10 +166,10 @@ cantonales et aux structures d'aide à la création (Créapole dans le Jura, par
 | `automatisation/kit.py`, `kit.html` | Le kit de lancement (logos, carte de visite, fiche Google, publications) |
 | `automatisation/base.py`, `decision.py` | Lien avec la base Supabase, et décision de lancer la machine (matin ou demande depuis l'appli) |
 | `automatisation/cockpit.html` | Le cockpit de secours |
-| `webapp/` | Ton appli Jour Un, en ligne sur Vercel |
+| `webapp/` | Ton appli web-design.ch, en ligne sur Vercel |
 | `supabase/functions/stripe-webhook/` | Reçoit les paiements Stripe et les enregistre dans ta base |
 | `generateur/` | Le générateur de site (utilisé par la machine, ou à la main pour le site final d'un client) |
-| `agence/index.html` | Ta page publique Jour Un |
+| `agence/index.html` | Ta page publique web-design.ch |
 | `outils/kit-avis.html` | Affiche QR code pour que tes clients récoltent des avis Google |
 | `documents/` | Scripts d'appel, livraison d'un kit, conditions de vente |
 | `../.github/workflows/` | L'automatisation : `machine.yml` (tous les jours) et `tests.yml` |
