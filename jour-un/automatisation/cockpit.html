@@ -2,103 +2,318 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Cockpit — Jour Un</title>
+<meta name="theme-color" content="#e8590c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jour Un">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<title>Jour Un — Admin</title>
 <style>
-:root{--c:#0b63ce;--ink:#14161a;--muted:#5b616e;--line:#e3e6eb;--soft:#f4f6f9;--ok:#1b873f;--warn:#b45309}
+:root{--c:#e8590c;--bleu:#0b63ce;--ink:#14161a;--muted:#5b616e;--line:#e3e6eb;--soft:#f4f6f9;--ok:#1b873f;--ko:#c62828}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--soft);color:var(--ink);line-height:1.45}
-.page{max-width:980px;margin:0 auto;padding:16px}
-h1{font-size:22px;margin:4px 0}
+.page{max-width:980px;margin:0 auto;padding:16px 16px 96px}
+header.haut{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+h1{font-size:22px;margin:0}
+h1 span{color:var(--c)}
+h2{font-size:19px;margin:24px 0 10px}
+h3{font-size:16px;margin:0 0 8px}
 .muted{color:var(--muted);font-size:14px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}
+nav.onglets{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+nav.onglets button{flex:1;border:0;background:none;padding:10px 4px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;border-radius:0}
+nav.onglets button b{display:block;font-size:19px;line-height:1.1}
+nav.onglets button.actif{color:var(--c);font-weight:700}
+@media(min-width:760px){nav.onglets{position:sticky;top:0;bottom:auto;border:1px solid var(--line);border-radius:12px;margin:8px 0 16px}nav.onglets button{font-size:15px}.page{padding-bottom:40px}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
 .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
 .stat b{display:block;font-size:24px}
 .filtres{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .filtres input[type=search],.filtres select{padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;flex:1 1 150px}
 .filtres label{display:flex;align-items:center;gap:6px;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:0 10px}
-.p{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.p,.bloc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
 .p.fait{opacity:.6}
 .ligne{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
 .nom{font-weight:700;font-size:17px}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
-.tag{font-size:12px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
-.tag.new{background:#e8f1fd;border-color:#b7d3f7;color:var(--c);font-weight:600}
+.tag{font-size:12px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:inherit;text-decoration:none}
+.tag.new{background:#e8f1fd;border-color:#b7d3f7;color:var(--bleu);font-weight:600}
 .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.actions a{font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff}
-.actions a.prim{background:var(--c);border-color:var(--c);color:#fff}
+.actions a,.actions button{font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff;cursor:pointer;font-family:inherit}
+.actions a.prim{background:var(--bleu);border-color:var(--bleu);color:#fff}
+.actions button.stop{color:var(--ko);margin-left:auto}
 select.statut{padding:6px 8px;border-radius:8px;border:1px solid var(--line);font:inherit;font-size:14px}
 button{font:inherit;padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+button.prim{background:var(--c);border-color:var(--c);color:#fff;font-weight:600}
+button:disabled{opacity:.5;cursor:wait}
 .vide{text-align:center;padding:40px;color:var(--muted)}
 .verrou{max-width:360px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
-.verrou input{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;font:inherit;margin:10px 0}
+.verrou input,.champ input,.champ textarea,.champ select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+.verrou input{margin:10px 0}
 .verrou button{width:100%;background:var(--c);color:#fff;border-color:var(--c);font-weight:600}
-.client{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
-.client .post{border-top:1px solid var(--line);padding:10px 0}
-.client .post p{margin:4px 0}
+.champ{margin:10px 0}
+.champ label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
+.champ textarea{min-height:90px}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 12px}
+.cases{display:flex;flex-wrap:wrap;gap:6px}
+.cases label{display:flex;align-items:center;gap:6px;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff}
+.msg{font-size:14px;margin-top:8px}
+.msg.ok{color:var(--ok)}.msg.ko{color:var(--ko)}
+.post{border-top:1px solid var(--line);padding:10px 0}
+.post p{margin:4px 0}
+.run{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.pastille{font-size:13px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--soft)}
+.pastille.ok{background:#e7f6ec;color:var(--ok)}.pastille.ko{background:#fdecec;color:var(--ko)}.pastille.encours{background:#fff4e5;color:#b45309}
+ol{padding-left:20px}ol li{margin:4px 0}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:13px}
 </style>
 </head>
 <body>
 <form class="verrou" id="verrou" hidden>
-  <h1>Cockpit Jour Un</h1>
+  <h1>Jour <span>Un</span> · Admin</h1>
   <p class="muted" id="verrou-msg">Entre ton mot de passe (celui du secret COCKPIT_MOT_DE_PASSE).</p>
   <input type="password" id="mdp" autocomplete="current-password" placeholder="Mot de passe">
   <label class="muted"><input type="checkbox" id="retenir" checked> Se souvenir sur cet appareil</label>
   <button type="submit" style="margin-top:12px">Ouvrir</button>
 </form>
+
 <div class="page" id="contenu" hidden>
-  <h1>Cockpit Jour Un</h1>
+  <header class="haut">
+    <h1>Jour <span>Un</span> · Admin</h1>
+    <button id="deconnexion" class="muted" style="font-size:13px;padding:6px 10px">Verrouiller</button>
+  </header>
   <div class="muted" id="maj"></div>
-  <div class="stats" id="stats"></div>
-  <div class="filtres">
-    <input type="search" id="q" placeholder="Rechercher un nom, une ville…">
-    <select id="fm"><option value="">Tous les métiers</option></select>
-    <select id="fs">
-      <option value="actifs">À traiter</option><option value="">Tous les statuts</option>
-    </select>
-    <label><input type="checkbox" id="fn"> Arrivés cette semaine</label>
-    <label><input type="checkbox" id="ft"> Avec téléphone</label>
-  </div>
-  <div id="liste"></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
-    <button id="plus" hidden>Voir plus</button>
-    <button id="export">Exporter le suivi (CSV)</button>
-  </div>
-  <h2 style="margin-top:32px">Mes clients : publications du mois</h2>
-  <div id="clients"></div>
-  <p class="muted">Les statuts sont enregistrés dans ce navigateur. Utilise toujours le même téléphone ou ordinateur, et exporte le suivi de temps en temps.</p>
+
+  <nav class="onglets">
+    <button data-vers="prospects"><b>☎</b>Prospects</button>
+    <button data-vers="clients"><b>★</b>Clients</button>
+    <button data-vers="reglages"><b>⚙</b>Réglages</button>
+    <button data-vers="machine"><b>⟳</b>Machine</button>
+  </nav>
+
+  <section data-onglet="prospects">
+    <div class="stats" id="stats"></div>
+    <div class="filtres">
+      <input type="search" id="q" placeholder="Rechercher un nom, une ville…">
+      <select id="fm"><option value="">Tous les métiers</option></select>
+      <select id="fs"><option value="actifs">À traiter</option><option value="">Tous les statuts</option></select>
+      <label><input type="checkbox" id="fn"> Arrivés cette semaine</label>
+      <label><input type="checkbox" id="ft"> Avec téléphone</label>
+    </div>
+    <div id="liste"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
+      <button id="plus" hidden>Voir plus</button>
+      <button id="export">Exporter le suivi (CSV)</button>
+    </div>
+    <p class="muted">Les statuts sont enregistrés sur cet appareil. Utilise toujours le même téléphone ou ordinateur, et exporte le suivi de temps en temps.</p>
+  </section>
+
+  <section data-onglet="clients" hidden>
+    <div data-github>
+      <h2>Mes clients abonnés</h2>
+      <div class="bloc" id="clients-liste"><p class="muted">Chargement…</p></div>
+      <form class="bloc" id="client-ajout">
+        <h3>Ajouter un client</h3>
+        <div class="grille">
+          <div class="champ"><label>Nom de l'entreprise</label><input name="nom" required></div>
+          <div class="champ"><label>Métier</label><select name="metier" id="client-metier"></select></div>
+          <div class="champ"><label>Ville</label><input name="ville" required></div>
+          <div class="champ"><label>Téléphone (affiché dans ses publications)</label><input name="telephone"></div>
+        </div>
+        <button class="prim" type="submit">Ajouter</button>
+        <div class="msg" id="clients-msg"></div>
+      </form>
+    </div>
+    <h2>Publications du mois à publier</h2>
+    <p class="muted">Rédigées par la machine le 1er de chaque mois pour chacun de tes clients. Copie-les sur leur fiche Google, une par semaine.</p>
+    <div id="clients-posts"></div>
+  </section>
+
+  <section data-onglet="reglages" hidden>
+    <div data-github>
+      <form id="reglages">
+        <h2>Mes coordonnées</h2>
+        <div class="bloc grille">
+          <div class="champ"><label>Prénom et nom</label><input name="moi.nom"></div>
+          <div class="champ"><label>Téléphone</label><input name="moi.telephone"></div>
+          <div class="champ"><label>Email</label><input name="moi.email" type="email"></div>
+          <div class="champ"><label>Ville</label><input name="moi.ville"></div>
+          <div class="champ"><label>N° IDE (laisser vide si tu n'en as pas)</label><input name="moi.siret"></div>
+        </div>
+        <h2>Mon offre</h2>
+        <div class="bloc grille">
+          <div class="champ"><label>Prix du kit</label><input name="offre.prix_kit" type="number" min="0"></div>
+          <div class="champ"><label>Prix du suivi par mois</label><input name="offre.prix_mois" type="number" min="0"></div>
+          <div class="champ"><label>Devise</label><input name="offre.devise"></div>
+          <div class="champ"><label>Lien de paiement (Stripe, etc.)</label><input name="offre.lien_paiement" placeholder="https://…"></div>
+        </div>
+        <h2>Où et qui prospecter</h2>
+        <div class="bloc">
+          <div class="champ"><label>Cantons</label><div class="cases" id="cases-cantons"></div></div>
+          <div class="champ"><label>Métiers</label>
+            <div class="cases"><label><input type="checkbox" id="tous-metiers"> Tous les métiers</label></div>
+            <div class="cases" id="cases-metiers" style="margin-top:6px"></div></div>
+        </div>
+        <h2>Mes messages</h2>
+        <div class="bloc">
+          <p class="muted">Mots remplacés automatiquement : {nom} (l'entreprise), {lien} (son kit), {moi}, {tel}, {ville}, {metier}.</p>
+          <div class="champ"><label>SMS / WhatsApp</label><textarea name="messages.sms"></textarea></div>
+          <div class="champ"><label>Objet de l'email</label><input name="messages.email_objet"></div>
+          <div class="champ"><label>Email</label><textarea name="messages.email" style="min-height:200px"></textarea></div>
+        </div>
+        <h2>Exclusions (« stop »)</h2>
+        <div class="bloc">
+          <div class="champ"><label>Numéros IDE à ne plus jamais contacter, un par ligne</label><textarea name="exclus"></textarea></div>
+        </div>
+        <button class="prim" type="submit" style="width:100%;padding:14px">Enregistrer les réglages</button>
+        <div class="msg" id="reglages-msg"></div>
+      </form>
+      <p class="muted" style="margin-top:24px">Connecté à GitHub sur cet appareil. <button type="button" id="gh-deconnexion" style="font-size:13px;padding:4px 8px">Déconnecter</button></p>
+    </div>
+  </section>
+
+  <section data-onglet="machine" hidden>
+    <div class="bloc">
+      <h3>Dernière mise à jour du panel</h3>
+      <p id="machine-maj" class="muted"></p>
+      <p class="muted">La machine tourne toute seule chaque matin vers 7 h, et après chaque modification de tes réglages.</p>
+    </div>
+    <div data-github>
+      <div class="bloc">
+        <div class="ligne"><h3>Derniers lancements</h3><button class="prim" id="lancer">Lancer maintenant</button></div>
+        <div id="runs"><p class="muted">Chargement…</p></div>
+        <div class="msg" id="machine-msg"></div>
+      </div>
+    </div>
+    <div class="bloc">
+      <h3>Liens utiles</h3>
+      <p><a href="../" target="_blank">Ma page publique Jour Un</a></p>
+      <p><a id="lien-actions" target="_blank">Les lancements sur GitHub</a></p>
+    </div>
+    <div class="bloc">
+      <h3>Installer le panel sur ton téléphone</h3>
+      <p class="muted"><b>iPhone</b> (Safari) : bouton Partager → « Sur l'écran d'accueil ».<br>
+      <b>Android</b> (Chrome) : menu ⋮ → « Ajouter à l'écran d'accueil » ou « Installer l'application ».</p>
+    </div>
+  </section>
 </div>
+
+<template id="tpl-connexion">
+  <div class="bloc">
+    <h3>Connecter le panel à GitHub (une seule fois par appareil)</h3>
+    <p class="muted">Pour modifier tes réglages, tes clients et relancer la machine, le panel a besoin d'une clé d'accès à ton projet GitHub. Elle reste sur cet appareil.</p>
+    <ol class="muted">
+      <li>Ouvre <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">github.com/settings/personal-access-tokens/new</a></li>
+      <li><b>Token name</b> : <code>Jour Un admin</code> · <b>Expiration</b> : 1 an (366 days) ou « No expiration »</li>
+      <li><b>Repository access</b> : « Only select repositories » → <code data-depot></code></li>
+      <li><b>Permissions → Repository permissions</b> : <b>Contents</b> → « Read and write », et <b>Actions</b> → « Read and write »</li>
+      <li>Clique sur <b>Generate token</b>, copie la clé (elle commence par <code>github_pat_</code>) et colle-la ici :</li>
+    </ol>
+    <div class="champ"><input type="password" data-cle placeholder="github_pat_…" autocomplete="off"></div>
+    <button class="prim" data-connecter>Connecter</button>
+    <div class="msg" data-cle-msg></div>
+  </div>
+</template>
 
 <script>
 const CHARGE = __DONNEES__;
 let D;
 const STATUTS = ["À contacter", "Kit envoyé", "Relancé", "Intéressé", "Client", "Pas intéressé"];
 const FINIS = ["Client", "Pas intéressé"];
-const CLE = "vl-suivi";
+const CANTONS = { JU: "Jura", NE: "Neuchâtel", VD: "Vaud", GE: "Genève", FR: "Fribourg", VS: "Valais", BE: "Berne" };
+const CONFIG = "jour-un/automatisation/config.json", CLIENTS = "jour-un/automatisation/clients.json";
+const $ = id => document.getElementById(id);
+const stock = {
+  get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
+  del: k => { try { localStorage.removeItem(k); } catch (e) {} },
+};
 let suivi = {};
-try { suivi = JSON.parse(localStorage.getItem(CLE)) || {}; } catch (e) {}
-const sauver = () => { try { localStorage.setItem(CLE, JSON.stringify(suivi)); } catch (e) {} };
+try { suivi = JSON.parse(stock.get("vl-suivi")) || {}; } catch (e) {}
+const sauver = () => stock.set("vl-suivi", JSON.stringify(suivi));
 const statut = id => (suivi[id] && suivi[id].statut) || "À contacter";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const enc = encodeURIComponent;
 const jours = (a, b) => (new Date(b) - new Date(a)) / 864e5;
+const aujourdhui = () => new Date().toISOString().slice(0, 10);
+const message = (id, texte, ok) => { const el = $(id); el.textContent = texte; el.className = "msg " + (ok ? "ok" : "ko"); };
 
-function demarrer() {
-document.getElementById("contenu").hidden = false;
-document.getElementById("verrou").hidden = true;
-document.getElementById("maj").textContent =
-  `Mis à jour le ${new Date(D.genere_le).toLocaleDateString("fr-FR")} · ${D.prospects.length} entreprises nouvelles avec leur kit prêt`;
-for (const m of [...new Set(D.prospects.map(p => p.metier))])
-  document.getElementById("fm").insertAdjacentHTML("beforeend", `<option value="${esc(m)}">${esc(D.metiers[m] || m)}</option>`);
-document.getElementById("clients").innerHTML = (D.clients || []).map(c => `<div class="client"><b>${esc(c.nom)}</b>${
-  c.posts.map((p, i) => `<div class="post"><b>Semaine ${i + 1} — ${esc(p.titre)}</b><p>${esc(p.texte)}</p>
-  <p class="muted">Visuel : ${esc(p.visuel)}</p><button data-copie="${esc(p.texte)}">Copier</button></div>`).join("")}</div>`).join("")
-  || '<p class="muted">Ajoute tes clients dans clients.json pour recevoir leurs publications chaque mois.</p>';
-dessiner();
+/* ---------- GitHub ---------- */
+function depot() {
+  if (D.depot) return D.depot;
+  return location.hostname.split(".")[0] + "/" + location.pathname.split("/")[1];
 }
-for (const s of STATUTS) document.getElementById("fs").insertAdjacentHTML("beforeend", `<option>${s}</option>`);
+async function gh(chemin, options = {}) {
+  const cle = stock.get("vl-gh");
+  if (!cle) throw new Error("Panel non connecté à GitHub.");
+  const r = await fetch(`https://api.github.com/repos/${depot()}${chemin}`, {
+    ...options,
+    headers: { Authorization: `Bearer ${cle}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+  });
+  if (!r.ok) {
+    if (r.status === 401) throw new Error("Clé GitHub invalide ou expirée : reconnecte le panel.");
+    if (r.status === 403 || r.status === 404) throw new Error("La clé n'a pas les bons droits sur ce projet (Contents et Actions en « Read and write »).");
+    if (r.status === 409) throw new Error("Le fichier a changé entre-temps : recharge la page et recommence.");
+    throw new Error(`Erreur GitHub ${r.status}.`);
+  }
+  return r.status === 204 ? null : r.json();
+}
+const b64enc = s => { let bin = ""; new TextEncoder().encode(s).forEach(x => bin += String.fromCharCode(x)); return btoa(bin); };
+const b64dec = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g, "")), c => c.charCodeAt(0)));
+async function lire(chemin) {
+  const f = await gh(`/contents/${chemin}?ref=main`);
+  return { json: JSON.parse(b64dec(f.content)), sha: f.sha };
+}
+async function ecrire(chemin, contenu, sha, resume) {
+  return gh(`/contents/${chemin}`, { method: "PUT", body: JSON.stringify({
+    message: resume, sha, branch: "main", content: b64enc(JSON.stringify(contenu, null, 1) + "\n") }) });
+}
+function brancherGithub() {
+  document.querySelectorAll("[data-github]").forEach(zone => {
+    zone.hidden = !stock.get("vl-gh");
+    let bloc = zone.previousElementSibling;
+    if (!bloc || !bloc.matches("[data-connexion]")) {
+      bloc = document.createElement("div");
+      bloc.setAttribute("data-connexion", "");
+      bloc.append($("tpl-connexion").content.cloneNode(true));
+      bloc.querySelector("[data-depot]").textContent = depot();
+      bloc.querySelector("[data-connecter]").addEventListener("click", () => connecter(bloc));
+      zone.before(bloc);
+    }
+    bloc.hidden = !!stock.get("vl-gh");
+  });
+}
+async function connecter(bloc) {
+  const cle = bloc.querySelector("[data-cle]").value.trim();
+  const msg = bloc.querySelector("[data-cle-msg]");
+  if (!cle) return;
+  stock.set("vl-gh", cle);
+  try {
+    await gh("/contents/" + CONFIG + "?ref=main");
+    brancherGithub();
+    montrer(stock.get("vl-onglet") || "reglages");
+  } catch (e) {
+    stock.del("vl-gh");
+    msg.textContent = e.message;
+    msg.className = "msg ko";
+  }
+}
 
+/* ---------- Onglets ---------- */
+function montrer(nom) {
+  document.querySelectorAll("[data-onglet]").forEach(s => { s.hidden = s.dataset.onglet !== nom; });
+  document.querySelectorAll("nav.onglets button").forEach(b => b.classList.toggle("actif", b.dataset.vers === nom));
+  stock.set("vl-onglet", nom);
+  if (!stock.get("vl-gh")) return;
+  if (nom === "reglages") chargerReglages();
+  if (nom === "clients") chargerClients();
+  if (nom === "machine") chargerMachine();
+}
+document.querySelectorAll("nav.onglets button").forEach(b => b.addEventListener("click", () => montrer(b.dataset.vers)));
+
+/* ---------- Prospects ---------- */
 function numero(t) {
   const c = String(t || "").replace(/[^\d+]/g, "");
   if (/^0\d{9}$/.test(c)) return "+" + (D.indicatif || "33") + c.slice(1);
@@ -111,22 +326,19 @@ function remplir(modele, p) {
   return modele.replace(/\{(\w+)\}/g, (m, k) => k in v ? v[k] : m);
 }
 function contacte(id) {
-  if (statut(id) === "À contacter") { suivi[id] = { statut: "Kit envoyé", date: new Date().toISOString().slice(0, 10) }; sauver(); dessiner(false); }
+  if (statut(id) === "À contacter") { suivi[id] = { statut: "Kit envoyé", date: aujourdhui() }; sauver(); dessiner(false); }
 }
-
 let limite = 40;
 function filtres() {
-  const q = document.getElementById("q").value.trim().toLowerCase();
-  const fm = document.getElementById("fm").value, fs = document.getElementById("fs").value;
-  const fn = document.getElementById("fn").checked, ft = document.getElementById("ft").checked;
-  return D.prospects.filter(p =>
+  const q = $("q").value.trim().toLowerCase(), fm = $("fm").value, fs = $("fs").value;
+  const fn = $("fn").checked, ft = $("ft").checked;
+  return D.prospects.filter(p => !(suivi[p.id] && suivi[p.id].stop) &&
     (!q || (p.nom + " " + p.ville + " " + p.adresse).toLowerCase().includes(q)) &&
     (!fm || p.metier === fm) &&
     (fs === "" || (fs === "actifs" ? !FINIS.includes(statut(p.id)) : statut(p.id) === fs)) &&
     (!fn || jours(p.premiere_detection, D.genere_le) <= 7) &&
     (!ft || p.telephone));
 }
-
 function carte(p) {
   const tel = numero(p.telephone), s = statut(p.id);
   const mobile = (MOBILE[D.pays] || MOBILE.FR).test(tel);
@@ -135,12 +347,13 @@ function carte(p) {
   const nouveau = jours(p.premiere_detection, D.genere_le) <= 7;
   const a = [];
   if (p.kit) a.push(`<a class="prim" target="_blank" href="../${esc(p.kit)}">Voir son kit</a>`);
-  a.push(`<a target="_blank" href="https://www.google.com/search?q=${enc(p.nom + " " + (p.ville || ""))}">Google</a>`);
   if (suisse) a.push(`<a target="_blank" href="https://search.ch/tel/?was=${enc(p.nom)}&wo=${enc(p.ville || "")}">Annuaire</a>`);
+  a.push(`<a target="_blank" href="https://www.google.com/search?q=${enc(p.nom + " " + (p.ville || ""))}">Google</a>`);
   if (tel) a.push(`<a data-c href="tel:${esc(tel)}">Appeler</a>`);
   if (tel && p.kit) a.push(`<a data-c href="sms:${esc(tel)}?&body=${enc(remplir(D.messages.sms, p))}">SMS${accord}</a>`);
   if (mobile && p.kit) a.push(`<a data-c target="_blank" href="https://wa.me/${tel.slice(1)}?text=${enc(remplir(D.messages.sms, p))}">WhatsApp${accord}</a>`);
   if (p.email && p.kit) a.push(`<a data-c href="mailto:${esc(p.email)}?subject=${enc(remplir(D.messages.email_objet, p))}&body=${enc(remplir(D.messages.email, p))}">Email${accord}</a>`);
+  a.push(`<button class="stop" data-stop>Stop</button>`);
   const tags = [...(nouveau ? ['<span class="tag new">Nouveau</span>'] : []), ...(p.raisons || []).map(r => `<span class="tag">${esc(r)}</span>`)];
   if (p.site_web) tags.push(`<a class="tag" target="_blank" href="${esc(/^https?:/.test(p.site_web) ? p.site_web : "https://" + p.site_web)}">A un site</a>`);
   return `<div class="p ${FINIS.includes(s) ? "fait" : ""}" data-id="${esc(p.id)}">
@@ -151,47 +364,219 @@ function carte(p) {
     <div class="tags">${tags.join("")}</div>
     <div class="actions">${a.join("")}</div></div>`;
 }
-
 function dessiner(reset = true) {
   if (reset) limite = 40;
   const liste = filtres();
-  document.getElementById("liste").innerHTML = liste.slice(0, limite).map(carte).join("") ||
-    '<div class="vide">Aucun prospect pour ces filtres.</div>';
-  document.getElementById("plus").hidden = liste.length <= limite;
+  $("liste").innerHTML = liste.slice(0, limite).map(carte).join("") || '<div class="vide">Aucun prospect pour ces filtres.</div>';
+  $("plus").hidden = liste.length <= limite;
   const compte = s => D.prospects.filter(p => statut(p.id) === s).length;
   const nouveaux = D.prospects.filter(p => jours(p.premiere_detection, D.genere_le) <= 7).length;
-  document.getElementById("stats").innerHTML = [["Nouveaux (7 j)", nouveaux], ["À contacter", compte("À contacter")],
+  $("stats").innerHTML = [["Nouveaux (7 j)", nouveaux], ["À contacter", compte("À contacter")],
     ["Kits envoyés", compte("Kit envoyé") + compte("Relancé")], ["Intéressés", compte("Intéressé")], ["Clients", compte("Client")]]
     .map(([l, n]) => `<div class="stat"><b>${n}</b><span class="muted">${l}</span></div>`).join("");
 }
-
-document.getElementById("liste").addEventListener("change", e => {
+async function stopper(id) {
+  const p = D.prospects.find(x => x.id === id);
+  if (!confirm(`Retirer définitivement « ${p.nom} » ? Il ne sera plus jamais contacté et son kit sera supprimé.`)) return;
+  suivi[id] = { statut: "Pas intéressé", date: aujourdhui(), stop: true };
+  sauver();
+  dessiner(false);
+  if (!stock.get("vl-gh")) {
+    alert("Retiré de ta liste sur cet appareil. Pour supprimer aussi son kit, connecte le panel à GitHub (onglet Réglages) puis refais « Stop ».");
+    return;
+  }
+  try {
+    const { json, sha } = await lire(CONFIG);
+    const ide = id.split("-").slice(1).join("-");
+    json.exclus = [...new Set([...(json.exclus || []).map(String), ide])];
+    await ecrire(CONFIG, json, sha, `Exclusion (stop) : ${p.nom}`);
+  } catch (e) {
+    alert("Retiré de ta liste, mais l'exclusion n'a pas pu être enregistrée : " + e.message);
+  }
+}
+$("liste").addEventListener("change", e => {
   if (!e.target.matches("select.statut")) return;
   const id = e.target.closest(".p").dataset.id;
-  suivi[id] = { statut: e.target.value, date: new Date().toISOString().slice(0, 10) };
+  suivi[id] = { statut: e.target.value, date: aujourdhui() };
   sauver(); dessiner(false);
 });
-document.getElementById("liste").addEventListener("click", e => {
+$("liste").addEventListener("click", e => {
   const a = e.target.closest("a[data-c]");
   if (a) setTimeout(() => contacte(a.closest(".p").dataset.id), 300);
+  const b = e.target.closest("button[data-stop]");
+  if (b) stopper(b.closest(".p").dataset.id);
 });
-for (const id of ["q", "fm", "fs", "fn", "ft"]) document.getElementById(id).addEventListener("input", () => dessiner());
-document.getElementById("plus").addEventListener("click", () => { limite += 40; dessiner(false); });
-document.getElementById("export").addEventListener("click", () => {
+for (const id of ["q", "fm", "fs", "fn", "ft"]) $(id).addEventListener("input", () => dessiner());
+$("plus").addEventListener("click", () => { limite += 40; dessiner(false); });
+$("export").addEventListener("click", () => {
   const lignes = [["nom", "metier", "ville", "telephone", "email", "statut", "date_statut", "kit"]];
   for (const p of D.prospects) lignes.push([p.nom, D.metiers[p.metier] || p.metier, p.ville, p.telephone, p.email, statut(p.id),
     (suivi[p.id] || {}).date || "", p.kit ? new URL("../" + p.kit, location.href).href : ""]);
   const csv = lignes.map(l => l.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv" }));
-  a.download = `suivi-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `suivi-${aujourdhui()}.csv`;
   a.click();
 });
-document.getElementById("clients").addEventListener("click", async e => {
+
+/* ---------- Clients ---------- */
+async function chargerClients() {
+  try {
+    const { json } = await lire(CLIENTS);
+    $("clients-liste").innerHTML = json.length ? json.map((c, i) => `<div class="run"><div><b>${esc(c.nom)}</b>
+      <div class="muted">${esc(D.metiers[c.metier] || c.metier)} · ${esc(c.ville)}${c.telephone ? " · " + esc(c.telephone) : ""}</div></div>
+      <button data-retirer="${i}">Retirer</button></div>`).join("") : '<p class="muted">Aucun client abonné pour l\'instant.</p>';
+  } catch (e) {
+    $("clients-liste").innerHTML = `<p class="msg ko">${esc(e.message)}</p>`;
+  }
+}
+async function modifierClients(changer, resume) {
+  const { json, sha } = await lire(CLIENTS);
+  await ecrire(CLIENTS, changer(json), sha, resume);
+  await chargerClients();
+}
+$("client-ajout").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  const bouton = e.target.querySelector("button");
+  bouton.disabled = true;
+  try {
+    const client = { nom: f.nom.trim(), metier: f.metier, ville: f.ville.trim(), ...(f.telephone.trim() ? { telephone: f.telephone.trim() } : {}) };
+    await modifierClients(l => [...l, client], `Nouveau client : ${client.nom}`);
+    e.target.reset();
+    message("clients-msg", "Client ajouté ✓ Ses publications apparaîtront après le prochain passage de la machine.", true);
+  } catch (err) {
+    message("clients-msg", err.message, false);
+  }
+  bouton.disabled = false;
+});
+$("clients-liste").addEventListener("click", async e => {
+  const b = e.target.closest("[data-retirer]");
+  if (!b || !confirm("Retirer ce client de ta liste d'abonnés ?")) return;
+  b.disabled = true;
+  try {
+    await modifierClients(l => l.filter((_, i) => i !== Number(b.dataset.retirer)), "Client retiré");
+  } catch (err) {
+    message("clients-msg", err.message, false);
+  }
+});
+$("clients-posts").addEventListener("click", async e => {
   const b = e.target.closest("button[data-copie]");
   if (!b) return;
   try { await navigator.clipboard.writeText(b.dataset.copie); b.textContent = "Copié !"; } catch (err) {}
 });
+
+/* ---------- Réglages ---------- */
+let reglagesCharges = false;
+async function chargerReglages() {
+  if (reglagesCharges) return;
+  const form = $("reglages");
+  try {
+    const { json } = await lire(CONFIG);
+    for (const champ of form.querySelectorAll("[name]")) {
+      const [a, b] = champ.name.split(".");
+      const v = b ? (json[a] || {})[b] : json[a];
+      champ.value = Array.isArray(v) ? v.join("\n") : (v ?? "");
+    }
+    const cantons = new Set((json.zone || {}).cantons || []);
+    $("cases-cantons").innerHTML = Object.entries(CANTONS).map(([k, n]) =>
+      `<label><input type="checkbox" value="${k}" ${cantons.has(k) ? "checked" : ""}> ${n}</label>`).join("");
+    const metiers = (json.zone || {}).metiers;
+    $("tous-metiers").checked = metiers === "tous";
+    const actifs = new Set(Array.isArray(metiers) ? metiers : []);
+    $("cases-metiers").innerHTML = Object.entries(D.metiers).map(([k, n]) =>
+      `<label><input type="checkbox" value="${k}" ${actifs.has(k) ? "checked" : ""}> ${esc(n)}</label>`).join("");
+    $("cases-metiers").hidden = $("tous-metiers").checked;
+    reglagesCharges = true;
+  } catch (e) {
+    message("reglages-msg", e.message, false);
+  }
+}
+$("tous-metiers").addEventListener("change", e => { $("cases-metiers").hidden = e.target.checked; });
+$("reglages").addEventListener("submit", async e => {
+  e.preventDefault();
+  const bouton = e.target.querySelector("button[type=submit]");
+  bouton.disabled = true;
+  try {
+    const { json, sha } = await lire(CONFIG);
+    for (const champ of e.target.querySelectorAll("[name]")) {
+      const [a, b] = champ.name.split(".");
+      let v = champ.value.trim();
+      if (champ.type === "number") v = Number(v);
+      if (a === "exclus") v = v.split(/\s+/).map(x => x.replace(/^CHE-?/i, "").replace(/\D/g, "")).filter(Boolean);
+      if (b) json[a] = { ...(json[a] || {}), [b]: v }; else json[a] = v;
+    }
+    const cantons = [...$("cases-cantons").querySelectorAll("input:checked")].map(i => i.value);
+    const metiers = $("tous-metiers").checked ? "tous" : [...$("cases-metiers").querySelectorAll("input:checked")].map(i => i.value);
+    if (!cantons.length) throw new Error("Choisis au moins un canton.");
+    if (Array.isArray(metiers) && !metiers.length) throw new Error("Choisis au moins un métier, ou « Tous les métiers ».");
+    json.zone = { ...(json.zone || {}), cantons, metiers };
+    await ecrire(CONFIG, json, sha, "Réglages modifiés depuis le panel admin");
+    message("reglages-msg", "Enregistré ✓ La machine se relance toute seule avec tes nouveaux réglages (environ 3 minutes).", true);
+  } catch (err) {
+    message("reglages-msg", err.message, false);
+  }
+  bouton.disabled = false;
+});
+$("gh-deconnexion").addEventListener("click", () => {
+  if (!confirm("Déconnecter ce panel de GitHub sur cet appareil ?")) return;
+  stock.del("vl-gh");
+  reglagesCharges = false;
+  brancherGithub();
+});
+
+/* ---------- Machine ---------- */
+const ETATS = { success: ["Réussi", "ok"], failure: ["Échec", "ko"], cancelled: ["Annulé", ""], skipped: ["Ignoré", ""] };
+const DECLENCHEURS = { schedule: "Automatique", workflow_dispatch: "Lancé à la main", push: "Après une modification" };
+let minuteur;
+async function chargerMachine() {
+  clearTimeout(minuteur);
+  try {
+    const r = await gh("/actions/workflows/machine.yml/runs?per_page=6");
+    $("runs").innerHTML = r.workflow_runs.map(run => {
+      const [texte, classe] = run.status === "completed" ? (ETATS[run.conclusion] || [run.conclusion, ""]) : ["En cours…", "encours"];
+      return `<div class="run"><div><b>${new Date(run.created_at).toLocaleString("fr-CH", { dateStyle: "short", timeStyle: "short" })}</b>
+        <div class="muted">${DECLENCHEURS[run.event] || run.event}</div></div>
+        <div><span class="pastille ${classe}">${texte}</span> <a href="${esc(run.html_url)}" target="_blank" class="muted">détails</a></div></div>`;
+    }).join("") || '<p class="muted">Aucun lancement pour l\'instant.</p>';
+    if (r.workflow_runs.some(run => run.status !== "completed") && !document.querySelector('[data-onglet="machine"]').hidden)
+      minuteur = setTimeout(chargerMachine, 20000);
+  } catch (e) {
+    $("runs").innerHTML = `<p class="msg ko">${esc(e.message)}</p>`;
+  }
+}
+$("lancer").addEventListener("click", async e => {
+  e.target.disabled = true;
+  try {
+    await gh("/actions/workflows/machine.yml/dispatches", { method: "POST", body: JSON.stringify({ ref: "main" }) });
+    message("machine-msg", "C'est parti ✓ Le panel sera à jour dans quelques minutes (recharge la page ensuite).", true);
+    setTimeout(chargerMachine, 4000);
+  } catch (err) {
+    message("machine-msg", err.message, false);
+  }
+  e.target.disabled = false;
+});
+
+/* ---------- Démarrage ---------- */
+function demarrer() {
+  $("contenu").hidden = false;
+  $("verrou").hidden = true;
+  $("maj").textContent = `Mis à jour le ${new Date(D.genere_le).toLocaleDateString("fr-CH")} · ${D.prospects.length} nouvelles entreprises avec leur kit prêt`;
+  $("machine-maj").textContent = new Date(D.genere_le).toLocaleDateString("fr-CH", { dateStyle: "full" });
+  $("lien-actions").href = `https://github.com/${depot()}/actions`;
+  for (const s of STATUTS) $("fs").insertAdjacentHTML("beforeend", `<option>${s}</option>`);
+  for (const m of [...new Set(D.prospects.map(p => p.metier))])
+    $("fm").insertAdjacentHTML("beforeend", `<option value="${esc(m)}">${esc(D.metiers[m] || m)}</option>`);
+  $("client-metier").innerHTML = Object.entries(D.metiers).map(([k, n]) => `<option value="${k}">${esc(n)}</option>`).join("");
+  $("clients-posts").innerHTML = (D.clients || []).map(c => `<div class="bloc"><b>${esc(c.nom)}</b>${
+    c.posts.map((p, i) => `<div class="post"><b>Semaine ${i + 1} — ${esc(p.titre)}</b><p>${esc(p.texte)}</p>
+    <p class="muted">Visuel : ${esc(p.visuel)}</p><button data-copie="${esc(p.texte)}">Copier</button></div>`).join("")}</div>`).join("")
+    || '<p class="muted">Aucune publication : ajoute d\'abord un client abonné.</p>';
+  dessiner();
+  brancherGithub();
+  montrer(stock.get("vl-onglet") || "prospects");
+}
+$("deconnexion").addEventListener("click", () => { stock.del("vl-mdp"); location.reload(); });
 
 const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 async function dechiffrer(c, mdp) {
@@ -205,25 +590,21 @@ async function ouvrir(mdp, retenir) {
   try {
     D = await dechiffrer(CHARGE.chiffre, mdp);
   } catch (e) {
-    try { localStorage.removeItem("vl-mdp"); } catch (err) {}
-    document.getElementById("verrou").hidden = false;
-    document.getElementById("verrou-msg").textContent = "Mot de passe incorrect.";
+    stock.del("vl-mdp");
+    $("verrou").hidden = false;
+    $("verrou-msg").textContent = "Mot de passe incorrect.";
     return;
   }
-  if (retenir) { try { localStorage.setItem("vl-mdp", mdp); } catch (err) {} }
+  if (retenir) stock.set("vl-mdp", mdp);
   demarrer();
 }
 if (CHARGE.manquant) {
-  document.getElementById("verrou").hidden = false;
-  document.getElementById("verrou").innerHTML = '<h1>Cockpit Jour Un</h1><p class="muted">Pour protéger les données, le cockpit est vide tant que le secret COCKPIT_MOT_DE_PASSE n\'est pas créé dans GitHub (voir le README).</p>';
+  $("verrou").hidden = false;
+  $("verrou").innerHTML = '<h1>Jour <span>Un</span> · Admin</h1><p class="muted">Pour protéger les données, le panel reste vide tant que le secret COCKPIT_MOT_DE_PASSE n\'est pas créé dans GitHub, puis que la machine n\'a pas tourné une fois (voir le README).</p>';
 } else if (CHARGE.chiffre) {
-  let memo = null;
-  try { memo = localStorage.getItem("vl-mdp"); } catch (e) {}
-  if (memo) ouvrir(memo, true); else document.getElementById("verrou").hidden = false;
-  document.getElementById("verrou").addEventListener("submit", e => {
-    e.preventDefault();
-    ouvrir(document.getElementById("mdp").value, document.getElementById("retenir").checked);
-  });
+  const memo = stock.get("vl-mdp");
+  if (memo) ouvrir(memo, true); else $("verrou").hidden = false;
+  $("verrou").addEventListener("submit", e => { e.preventDefault(); ouvrir($("mdp").value, $("retenir").checked); });
 } else {
   D = CHARGE;
   demarrer();

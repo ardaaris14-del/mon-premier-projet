@@ -270,6 +270,7 @@ def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_pa
         "messages": config["messages"],
         "metiers": {k: v["libelle"] for k, v in METIERS.items()},
         "pays": config.get("pays", "FR"),
+        "depot": os.environ.get("GITHUB_REPOSITORY", ""),
         "indicatif": INDICATIFS[config.get("pays", "FR")],
         "prospects": [{c: p.get(c, "") for c in champs} for p in candidats],
         "clients": publications_clients(clients, aujourdhui),
@@ -283,7 +284,7 @@ def construire_site(config, prospects, sortie, aujourdhui, clients=(), mot_de_pa
         charge = donnees
     cockpit = (ICI / "cockpit.html").read_text(encoding="utf-8").replace(
         "__DONNEES__", json.dumps(charge, ensure_ascii=False).replace("</", "<\\/"))
-    (sortie / "cockpit").mkdir()
+    shutil.copytree(ICI / "pwa", sortie / "cockpit")
     (sortie / "cockpit" / "index.html").write_text(cockpit, encoding="utf-8")
     (sortie / ".nojekyll").write_text("")
     return len(candidats)

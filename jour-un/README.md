@@ -46,7 +46,24 @@ montrer son kit. S'il dit oui, il paie **CHF 290**.
    - ta page publique : `https://ardaaris14-del.github.io/mon-premier-projet/`
    - ton cockpit : `https://ardaaris14-del.github.io/mon-premier-projet/cockpit/`
 
-Tes réglages sont dans `automatisation/config.json` : coordonnées, prix, cantons, métiers, messages, exclusions.
+## Ton panel admin (téléphone et ordinateur)
+
+`https://ardaaris14-del.github.io/mon-premier-projet/cockpit/` : ouvre-le avec ton mot de passe, puis installe-le comme une appli
+(iPhone : Partager → « Sur l'écran d'accueil » ; Android : menu ⋮ → « Ajouter à l'écran d'accueil »).
+
+| Onglet | Ce que tu y fais |
+|---|---|
+| **Prospects** | Les nouvelles entreprises et leur kit : Annuaire, Appeler, SMS après accord, statut, bouton **Stop** (retire définitivement l'entreprise et supprime son kit) |
+| **Clients** | Ajouter ou retirer un client abonné, copier ses 4 publications du mois |
+| **Réglages** | Tes coordonnées, tes prix, ton lien de paiement, tes cantons, tes métiers, tes messages, les exclusions |
+| **Machine** | Voir les derniers passages du robot, le relancer d'un bouton |
+
+Les onglets Clients, Réglages et Machine modifient ton projet GitHub. La première fois, sur chaque appareil, le panel
+te demande une **clé d'accès GitHub** et t'explique comment la créer : clé « fine-grained » limitée à ce projet, avec les droits
+*Contents* et *Actions* en « Read and write ». La clé reste enregistrée uniquement sur ton appareil. Chaque modification de
+réglages relance automatiquement la machine.
+
+Tes réglages sont stockés dans `automatisation/config.json` : tu peux aussi les modifier directement là.
 
 ## La règle d'or en Suisse : appeler d'abord
 

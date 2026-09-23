@@ -113,6 +113,8 @@ class Machine(unittest.TestCase):
                 self.assertIn('name="robots" content="noindex', page.read_text(encoding="utf-8"))
             cockpit = (sortie / "cockpit" / "index.html").read_text(encoding="utf-8")
             self.assertIn("Plomberie Durand", cockpit)
+            for f in ("manifest.json", "icone-180.png", "icone-192.png", "icone-512.png"):
+                self.assertTrue((sortie / "cockpit" / f).exists(), f)
             self.assertNotIn("Ancien Garage", cockpit)
             self.assertIn(CONFIG["moi"]["nom"], (sortie / "index.html").read_text(encoding="utf-8"))
 
